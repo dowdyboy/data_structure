@@ -27,4 +27,6 @@ STATUS SEQ_LIST_PUT(SEQ_LIST* list, int idx, ELEM_TYPE data); // 修改
 
 STATUS SEQ_LIST_GET(SEQ_LIST* list, int idx, ELEM_TYPE *result); // 获取
 
+STATUS SEQ_LIST_DESTORY(SEQ_LIST* list);  // 销毁
+
 #endif

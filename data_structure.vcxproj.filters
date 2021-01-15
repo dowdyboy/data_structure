@@ -25,6 +25,12 @@
     <Filter Include="源文件\util">
       <UniqueIdentifier>{f5ddbd9d-6100-4e48-a4be-6aa222f876d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\tree">
+      <UniqueIdentifier>{2ef49ce8-8370-435a-bf12-4158e35b183e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\tree">
+      <UniqueIdentifier>{9d4f0a0d-7116-4452-a139-0ff409011d25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data_structure.cpp">
@@ -45,6 +51,9 @@
     <ClCompile Include="chars.cpp">
       <Filter>源文件\util</Filter>
     </ClCompile>
+    <ClCompile Include="bin_tree.cpp">
+      <Filter>源文件\tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="seq_list.h">
@@ -64,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="chars.h">
       <Filter>头文件\util</Filter>
+    </ClInclude>
+    <ClInclude Include="bin_tree.h">
+      <Filter>头文件\tree</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

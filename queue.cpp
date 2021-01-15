@@ -37,6 +37,16 @@ STATUS SEQ_QUEUE_GET_HEAD(SEQ_QUEUE* queue, ELEM_TYPE* data) {
 	return STATUS_SUCCESS;
 }
 
+STATUS SEQ_QUEUE_DESTORY(SEQ_QUEUE* queue) {
+	ELEM_TYPE* old_data = queue->base;
+	queue->base = NULL;
+	queue->head = 0;
+	queue->rear = 0;
+	queue->max_size = 0;
+	if (old_data != NULL) free(old_data);
+	return STATUS_SUCCESS;
+}
+
 
 STATUS LINK_QUEUE_INIT(LINK_QUEUE* queue) {
 	return DL_LINK_LIST_INIT(queue);
@@ -52,4 +62,8 @@ STATUS LINK_QUEUE_DEQUEUE(LINK_QUEUE* queue, ELEM_TYPE* data) {
 
 STATUS LINK_QUEUE_GET_HEAD(LINK_QUEUE* queue, ELEM_TYPE* data) {
 	return DL_LINK_LIST_GET(queue, 0, data);
+}
+
+STATUS LINK_QUEUE_DESTORY(LINK_QUEUE* queue) {
+	return DL_LINK_LIST_DESTORY(queue);
 }

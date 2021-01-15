@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bin_tree.cpp" />
     <ClCompile Include="chars.cpp" />
     <ClCompile Include="data_structure.cpp" />
     <ClCompile Include="link_list.cpp" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basis.h" />
+    <ClInclude Include="bin_tree.h" />
     <ClInclude Include="chars.h" />
     <ClInclude Include="link_list.h" />
     <ClInclude Include="queue.h" />

@@ -1,10 +1,14 @@
-﻿
-#include "stdio.h"
+﻿#include "stdio.h"
 #include "seq_list.h"
 #include "link_list.h"
 #include "stack.h"
 #include "queue.h"
 #include "chars.h"
+#include "bin_tree.h"
+
+void myPrint(ELEM_TYPE d) {
+	printf("print : %d\n", d);
+}
 
 void testSeqList() {
 	SEQ_LIST a;
@@ -186,9 +190,43 @@ void testChars() {
 	printf("\n");
 }
 
+void testBinTree() {
+	BIN_TREE* t = NULL;
+	/*int arrLen = 10;
+	int* arr = (int*)malloc(sizeof(int) * (arrLen + 1));
+	for (int i = 0; i < arrLen; i++) {
+		arr[i] = i;
+	}*/
+	int arrLen = 15;
+	int* arr = (int*)malloc(sizeof(int) * (arrLen + 1));
+	arr[0] = 31; arr[1] = 23; arr[2] = 12; arr[3] = 66; arr[4] = -1;
+	arr[5] = 5; arr[6] = 17; arr[7] = 70; arr[8] = 62; arr[9] = -1;
+	arr[10] = -1; arr[11] = -1; arr[12] = 88; arr[13] = -1; arr[14] = 55;
+	BIN_TREE_TRANSFORM_FROM_ARRAY(arr, arrLen, &t);
+	free(arr);
+
+	BIN_TREE_ERGODIC_DLR(t, myPrint);
+	printf("\n");
+	BIN_TREE_ERGODIC_LDR(t, myPrint);
+	printf("\n");
+	BIN_TREE_ERGODIC_LRD(t, myPrint);
+	printf("\n");
+
+	int c = 0;
+	BIN_TREE_NODE_COUNT(t,&c);
+	printf("count : %d\n\n", c);
+
+	ELEM_TYPE* t_arr=NULL;
+	int t_arr_len;
+	BIN_TREE_TRANSFORM_TO_ARRAY(t, &t_arr, &t_arr_len);
+	for (int i = 0; i < t_arr_len; i++) {
+		printf(" %d ", t_arr[i]);
+	}
+}
+
 int main() {
 
-	testChars();
+	testBinTree();
 
 	return 0;
 }

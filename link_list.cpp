@@ -77,6 +77,10 @@ STATUS LINK_LIST_GET(LINK_LIST* list, int idx, ELEM_TYPE* result) {
 	return STATUS_SUCCESS;
 }
 
+STATUS LINK_LIST_DESTORY(LINK_LIST* list) {
+	return LINK_LIST_CLEAR(list);
+}
+
 
 // Ë«ÏòÑ­»·Á´±í
 
@@ -154,7 +158,7 @@ STATUS DL_LINK_LIST_DELETE(DL_LINK_LIST* list, int idx) {
 }
 
 STATUS DL_LINK_LIST_CLEAR(DL_LINK_LIST* list) {
-	while (list->length != NULL) DL_LINK_LIST_DELETE(list, 0);
+	while (list->node != NULL) DL_LINK_LIST_DELETE(list, 0);
 	return STATUS_SUCCESS;
 }
 
@@ -190,4 +194,8 @@ STATUS DL_LINK_LIST_GET(DL_LINK_LIST* list, int idx, ELEM_TYPE* result) {
 	}
 	*result = p->data;
 	return STATUS_SUCCESS;
+}
+
+STATUS DL_LINK_LIST_DESTORY(DL_LINK_LIST* list) {
+	return DL_LINK_LIST_CLEAR(list);
 }

@@ -37,6 +37,15 @@ STATUS SEQ_STACK_GET_TOP(SEQ_STACK* stack, ELEM_TYPE* data) {
 	return STATUS_SUCCESS;
 }
 
+STATUS SEQ_STACK_DESTORY(SEQ_STACK* stack) {
+	ELEM_TYPE* old_data = stack->base;
+	stack->base = NULL;
+	stack->top = 0;
+	stack->max_size = 0;
+	if (old_data != NULL) free(old_data);
+	return STATUS_SUCCESS;
+}
+
 
 
 STATUS LINK_STACK_INIT(LINK_STACK* stack) {
@@ -55,4 +64,7 @@ STATUS LINK_STACK_GET_TOP(LINK_STACK* stack, ELEM_TYPE* data) {
 	return LINK_LIST_GET(stack, 0, data);
 }
 
+STATUS LINK_STACK_DESTORY(LINK_STACK* stack) {
+	return LINK_LIST_DESTORY(stack);
+}
 

@@ -23,6 +23,8 @@ STATUS SEQ_STACK_POP(SEQ_STACK* stack,ELEM_TYPE *data);  // 出栈
 
 STATUS SEQ_STACK_GET_TOP(SEQ_STACK* stack, ELEM_TYPE* data);  // 获取栈顶元素
 
+STATUS SEQ_STACK_DESTORY(SEQ_STACK* stack);  // 销毁
+
 // 链栈
 
 typedef LINK_LIST LINK_STACK;
@@ -35,5 +37,6 @@ STATUS LINK_STACK_POP(LINK_STACK* stack, ELEM_TYPE* data);  // 出栈
 
 STATUS LINK_STACK_GET_TOP(LINK_STACK* stack, ELEM_TYPE* data);  // 获取栈顶元素
 
+STATUS LINK_STACK_DESTORY(LINK_STACK* stack);  // 销毁
 
 #endif // !STACK_H

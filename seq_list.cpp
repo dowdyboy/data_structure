@@ -49,7 +49,9 @@ STATUS SEQ_LIST_CLEAR(SEQ_LIST* list) {
 }
 
 STATUS SEQ_LIST_PUT(SEQ_LIST* list, int idx, ELEM_TYPE data) {
-	if (idx < 0 || idx > list->length - 1) return STATUS_FAIL;
+	if (idx < 0 || idx > list->length - 1) {
+		return STATUS_FAIL;
+	}
 	list->data[idx] = data;
 	return STATUS_SUCCESS;
 }
@@ -57,5 +59,14 @@ STATUS SEQ_LIST_PUT(SEQ_LIST* list, int idx, ELEM_TYPE data) {
 STATUS SEQ_LIST_GET(SEQ_LIST* list, int idx, ELEM_TYPE* result) {
 	if (idx < 0 || idx > list->length - 1) return STATUS_FAIL;
 	*result = list->data[idx];
+	return STATUS_SUCCESS;
+}
+
+STATUS SEQ_LIST_DESTORY(SEQ_LIST* list) {
+	ELEM_TYPE* old_data = list->data;
+	list->data = NULL;
+	list->length = 0;
+	list->max_size = 0;
+	if (old_data != NULL) free(old_data);
 	return STATUS_SUCCESS;
 }

@@ -24,6 +24,8 @@ STATUS SEQ_QUEUE_DEQUEUE(SEQ_QUEUE* queue, ELEM_TYPE* data);  // 出队
 
 STATUS SEQ_QUEUE_GET_HEAD(SEQ_QUEUE* queue, ELEM_TYPE* data);  // 获取队头元素
 
+STATUS SEQ_QUEUE_DESTORY(SEQ_QUEUE* queue);  // 销毁
+
 
 // 链队列
 
@@ -36,6 +38,8 @@ STATUS LINK_QUEUE_ENQUEUE(LINK_QUEUE* queue, ELEM_TYPE data);  // 入队
 STATUS LINK_QUEUE_DEQUEUE(LINK_QUEUE* queue, ELEM_TYPE* data);  // 出队
 
 STATUS LINK_QUEUE_GET_HEAD(LINK_QUEUE* queue, ELEM_TYPE* data);  // 获取队头元素
+
+STATUS LINK_QUEUE_DESTORY(LINK_QUEUE* queue);  // 销毁
 
 
 #endif // !QUEUE_H
