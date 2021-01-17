@@ -205,6 +205,8 @@ void testBinTree() {
 	BIN_TREE_TRANSFORM_FROM_ARRAY(arr, arrLen, &t);
 	free(arr);
 
+	BIN_TREE_INDEX_DLR(t);
+
 	BIN_TREE_ERGODIC_DLR(t, myPrint);
 	printf("\n");
 	BIN_TREE_ERGODIC_LDR(t, myPrint);
@@ -222,6 +224,10 @@ void testBinTree() {
 	for (int i = 0; i < t_arr_len; i++) {
 		printf(" %d ", t_arr[i]);
 	}
+
+	printf("\n\n==============================\n\n");
+
+	printf("%d", t->left->left->right->right->data);
 }
 
 int main() {

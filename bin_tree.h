@@ -22,6 +22,18 @@ STATUS BIN_TREE_ERGODIC_LDR(BIN_TREE* tree, void (*func)(ELEM_TYPE));  // 中序遍
 
 STATUS BIN_TREE_ERGODIC_LRD(BIN_TREE* tree, void (*func)(ELEM_TYPE));  // 后序遍历
 
+STATUS BIN_TREE_ERGODIC_DLR_TO_ARRAY(BIN_TREE* tree, BIN_TREE*** ergodicList , int* nodeCount);  // 先序遍历，返回遍历序列的数组
+
+STATUS BIN_TREE_ERGODIC_LDR_TO_ARRAY(BIN_TREE* tree, BIN_TREE*** ergodicList , int* nodeCount);  // 中序遍历，返回遍历序列的数组
+
+STATUS BIN_TREE_ERGODIC_LRD_TO_ARRAY(BIN_TREE* tree, BIN_TREE*** ergodicList , int* nodeCount);  // 后序遍历，返回遍历序列的数组
+
 STATUS BIN_TREE_NODE_COUNT(BIN_TREE* tree,int* count);  // 获取节点个数
+
+STATUS BIN_TREE_INDEX_DLR(BIN_TREE* tree);  // 先序线索化
+
+STATUS BIN_TREE_INDEX_LDR(BIN_TREE* tree);  // 中序线索化
+
+STATUS BIN_TREE_INDEX_LRD(BIN_TREE* tree);  // 后序线索化
 
 #endif // !BIN_TREE_H
