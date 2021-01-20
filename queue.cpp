@@ -13,8 +13,23 @@ STATUS SEQ_QUEUE_ENQUEUE(SEQ_QUEUE* queue, ELEM_TYPE data) {
 	if ((queue->rear + 1) % queue->max_size == queue->head) {
 		ELEM_TYPE* old_base = queue->base;
 		queue->base = (ELEM_TYPE*)malloc(sizeof(ELEM_TYPE) * (queue->max_size + SEQ_QUEUE_INC_SIZE));
-		for (int i = 0; i < queue->max_size; i++) {
+		// 获取当前队列指针的低位和高位，用于之后进行数据复制
+		int low_idx = queue->head < queue->rear ? queue->head : queue->rear;
+		int high_idx = queue->head > queue->rear ? queue->head : queue->rear;
+		// 低位数据直接复制
+		for (int i = 0; i <= low_idx; i++) {
 			queue->base[i] = old_base[i];
+		}
+		// 高位数据隔出拓展的空间个数后复制
+		for (int i = high_idx; i < queue->max_size; i++) {
+			queue->base[i + SEQ_QUEUE_INC_SIZE] = old_base[i];
+		}
+		// 变动高位队列指针，将新分配的空间留白
+		if (queue->head > queue->rear) {
+			queue->head += SEQ_QUEUE_INC_SIZE;
+		}
+		else {
+			queue->rear += SEQ_QUEUE_INC_SIZE;
 		}
 		queue->max_size += SEQ_QUEUE_INC_SIZE;
 		free(old_base);

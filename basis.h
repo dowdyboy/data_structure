@@ -1,8 +1,8 @@
 #ifndef BASIS_H
 #define BASIS_H
 
-#include "stdio.h"
-#include "stdlib.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 // ÔªËØÀàĞÍ
 #define ELEM_TYPE int 

@@ -5,9 +5,25 @@
 #include "queue.h"
 #include "chars.h"
 #include "bin_tree.h"
+#include "graph_matrix.h"
+
+/*
+TODO:
+1. 哈夫曼编码
+2. 树的定义，树和二叉树的转换
+*/
 
 void myPrint(ELEM_TYPE d) {
 	printf("print : %d\n", d);
+}
+
+void printGraphMatrix(GRAPH_MATRIX g) {
+	for (int i = 0; i < g.nodeCount; i++) {
+		for (int k = 0; k < g.nodeCount; k++) {
+			printf(" %d ", g.relations[i][k]);
+		}
+		printf("\n");
+	}
 }
 
 void testSeqList() {
@@ -230,9 +246,33 @@ void testBinTree() {
 	printf("%d", t->left->left->right->right->data);
 }
 
+void testGraphMatrix() {
+	GRAPH_MATRIX g;
+	GRAPH_MATRIX_INIT(&g,7);
+	for (int i = 0; i < g.nodeCount; i++) {
+		GRAPH_MATRIX_PUT_NODE_VALUE(&g,i,i);
+	}
+	GRAPH_MATRIX_ADD_EDGE(&g, 0, 1, 1);
+	GRAPH_MATRIX_ADD_EDGE(&g, 0, 2, 1);
+	GRAPH_MATRIX_ADD_EDGE(&g, 0, 3, 1);
+	GRAPH_MATRIX_ADD_EDGE(&g, 1, 4, 1);
+	GRAPH_MATRIX_ADD_EDGE(&g, 1, 5, 1);
+	GRAPH_MATRIX_ADD_EDGE(&g, 1, 6, 1);
+	GRAPH_MATRIX_ADD_EDGE(&g, 2, 6, 1);
+	GRAPH_MATRIX_ADD_EDGE(&g, 4, 5, 1);
+
+	printGraphMatrix(g);
+	printf("\n");
+	GRAPH_MATRIX_DFS(&g,myPrint);
+	printf("\n");
+	GRAPH_MATRIX_BFS(&g, myPrint);
+
+	GRAPH_MATRIX_DESTROY(&g);
+}
+
 int main() {
 
-	testBinTree();
+	testGraphMatrix();
 
 	return 0;
 }

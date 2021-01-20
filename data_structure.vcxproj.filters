@@ -31,6 +31,12 @@
     <Filter Include="源文件\tree">
       <UniqueIdentifier>{9d4f0a0d-7116-4452-a139-0ff409011d25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\graph">
+      <UniqueIdentifier>{cdd5fc81-2f97-47bd-8d44-068f38a5ca0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\graph">
+      <UniqueIdentifier>{d42e48d9-b555-4290-bce7-8241ab11e711}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data_structure.cpp">
@@ -54,6 +60,12 @@
     <ClCompile Include="bin_tree.cpp">
       <Filter>源文件\tree</Filter>
     </ClCompile>
+    <ClCompile Include="graph_matrix.cpp">
+      <Filter>源文件\graph</Filter>
+    </ClCompile>
+    <ClCompile Include="graph_link.cpp">
+      <Filter>源文件\graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="seq_list.h">
@@ -76,6 +88,12 @@
     </ClInclude>
     <ClInclude Include="bin_tree.h">
       <Filter>头文件\tree</Filter>
+    </ClInclude>
+    <ClInclude Include="graph_matrix.h">
+      <Filter>头文件\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="graph_link.h">
+      <Filter>头文件\graph</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
