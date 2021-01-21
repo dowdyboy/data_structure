@@ -5,6 +5,7 @@
 #include "stack.h"
 #include "queue.h"
 
+// Í¼ÁÚ½Ó¾ØÕó¶¨Òå
 typedef struct _graph_matrix {
 	int nodeCount;
 	ELEM_TYPE* nodes;

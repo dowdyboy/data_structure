@@ -6,6 +6,7 @@
 #include "chars.h"
 #include "bin_tree.h"
 #include "graph_matrix.h"
+#include "graph_link.h"
 
 /*
 TODO:
@@ -24,6 +25,35 @@ void printGraphMatrix(GRAPH_MATRIX g) {
 		}
 		printf("\n");
 	}
+}
+
+void printGraphLink(GRAPH_LINK g) {
+	int** mat = (int**)malloc(sizeof(int*) * g.nodeCount);
+	for (int i = 0; i < g.nodeCount; i++) {
+		mat[i] = (int*)malloc(sizeof(int) * g.nodeCount);
+	}
+	for (int i = 0; i < g.nodeCount; i++) {
+		for (int k = 0; k < g.nodeCount; k++) {
+			mat[i][k] = 0;
+		}
+	}
+	for (int i = 0; i < g.nodeCount; i++) {
+		GRAPH_LINK_ARC* p = g.nodes[i].arc;
+		while (p != NULL) {
+			mat[i][p->index] = p->power;
+			p = p->next;
+		}
+	}
+	for (int i = 0; i < g.nodeCount; i++) {
+		for (int k = 0; k < g.nodeCount; k++) {
+			printf(" %d ", mat[i][k]);
+		}
+		printf("\n");
+	}
+	for (int i = 0; i < g.nodeCount; i++) {
+		free(mat[i]);
+	}
+	free(mat);
 }
 
 void testSeqList() {
@@ -270,9 +300,34 @@ void testGraphMatrix() {
 	GRAPH_MATRIX_DESTROY(&g);
 }
 
+void testGraphLink() {
+	GRAPH_LINK g;
+	GRAPH_LINK_INIT(&g,7);
+	for (int i = 0; i < g.nodeCount; i++) {
+		GRAPH_LINK_PUT_NODE_VALUE(&g, i, i);
+	}
+	GRAPH_LINK_ADD_EDGE(&g, 0, 1, 1);
+	GRAPH_LINK_ADD_EDGE(&g, 0, 2, 1);
+	GRAPH_LINK_ADD_EDGE(&g, 0, 3, 1);
+	GRAPH_LINK_ADD_EDGE(&g, 1, 4, 1);
+	GRAPH_LINK_ADD_EDGE(&g, 1, 5, 1);
+	GRAPH_LINK_ADD_EDGE(&g, 1, 6, 1);
+	GRAPH_LINK_ADD_EDGE(&g, 2, 6, 1);
+	GRAPH_LINK_ADD_EDGE(&g, 4, 5, 1);
+
+	printGraphLink(g);
+	printf("\n");
+	GRAPH_LINK_DFS(&g, myPrint);
+	printf("\n");
+	GRAPH_LINK_BFS(&g, myPrint);
+
+	GRAPH_LINK_DESTROY(&g);
+}
+
 int main() {
 
 	testGraphMatrix();
+	testGraphLink();
 
 	return 0;
 }
