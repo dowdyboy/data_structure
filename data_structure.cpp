@@ -298,6 +298,36 @@ void testGraphMatrix() {
 	GRAPH_MATRIX_BFS(&g, myPrint);
 
 	GRAPH_MATRIX_DESTROY(&g);
+
+	printf("\n\n");
+
+	GRAPH_MATRIX g2;
+	BIN_TREE* t = NULL,*t2 = NULL;
+	GRAPH_MATRIX_INIT(&g2, 6);
+	for (int i = 0; i < g2.nodeCount; i++) {
+		GRAPH_MATRIX_PUT_NODE_VALUE(&g2, i, i);
+	}
+	GRAPH_MATRIX_ADD_EDGE(&g2, 0, 1, 6);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 0, 3, 5);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 0, 2, 1);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 1, 2, 5);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 1, 4, 3);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 2, 4, 5);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 2, 3, 7);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 2, 5, 4);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 3, 5, 2);
+	GRAPH_MATRIX_ADD_EDGE(&g2, 4, 5, 6);
+	printGraphMatrix(g2);
+
+	GRAPH_MATRIX_MIN_GENERATED_TREE_PRIM(&g2,&t,0);
+	printf("\n");
+	BIN_TREE_ERGODIC_DLR(t, myPrint);
+
+	GRAPH_MATRIX_MIN_GENERATED_TREE_KRUSKAL(&g2, &t2);
+	printf("\n");
+	BIN_TREE_ERGODIC_DLR(t2, myPrint);
+
+	GRAPH_MATRIX_DESTROY(&g2);
 }
 
 void testGraphLink() {
@@ -322,11 +352,40 @@ void testGraphLink() {
 	GRAPH_LINK_BFS(&g, myPrint);
 
 	GRAPH_LINK_DESTROY(&g);
+
+	printf("\n\n");
+
+	GRAPH_LINK g2;
+	BIN_TREE* t = NULL, * t2 = NULL;
+	GRAPH_LINK_INIT(&g2, 6);
+	for (int i = 0; i < g2.nodeCount; i++) {
+		GRAPH_LINK_PUT_NODE_VALUE(&g2, i, i);
+	}
+	GRAPH_LINK_ADD_EDGE(&g2, 0, 1, 6);
+	GRAPH_LINK_ADD_EDGE(&g2, 0, 3, 5);
+	GRAPH_LINK_ADD_EDGE(&g2, 0, 2, 1);
+	GRAPH_LINK_ADD_EDGE(&g2, 1, 2, 5);
+	GRAPH_LINK_ADD_EDGE(&g2, 1, 4, 3);
+	GRAPH_LINK_ADD_EDGE(&g2, 2, 4, 5);
+	GRAPH_LINK_ADD_EDGE(&g2, 2, 3, 7);
+	GRAPH_LINK_ADD_EDGE(&g2, 2, 5, 4);
+	GRAPH_LINK_ADD_EDGE(&g2, 3, 5, 2);
+	GRAPH_LINK_ADD_EDGE(&g2, 4, 5, 6);
+	printGraphLink(g2);
+
+	GRAPH_LINK_MIN_GENERATED_TREE_PRIM(&g2, &t, 0);
+	printf("\n");
+	BIN_TREE_ERGODIC_DLR(t, myPrint);
+
+	GRAPH_LINK_MIN_GENERATED_TREE_KRUSKAL(&g2, &t2);
+	printf("\n");
+	BIN_TREE_ERGODIC_DLR(t2, myPrint);
+
+	GRAPH_LINK_DESTROY(&g2);
 }
 
 int main() {
 
-	testGraphMatrix();
 	testGraphLink();
 
 	return 0;

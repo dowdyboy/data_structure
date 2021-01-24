@@ -4,6 +4,9 @@
 #include "basis.h"
 #include "stack.h"
 #include "queue.h"
+#include "bin_tree.h"
+#include "seq_list.h"
+
 
 // Í¼ÁÚ½Ó±í£¬»¡¶¨Òå
 typedef struct _graph_link_arc {
@@ -44,6 +47,9 @@ STATUS GRAPH_LINK_DFS(GRAPH_LINK* graph, void (*func)(ELEM_TYPE));  // Éî¶ÈÓÅÏÈ±
 
 STATUS GRAPH_LINK_BFS(GRAPH_LINK* graph, void (*func)(ELEM_TYPE));  // ¹ã¶ÈÓÅÏÈ±éÀú
 
+STATUS GRAPH_LINK_MIN_GENERATED_TREE_PRIM(GRAPH_LINK* graph, BIN_TREE** tree, int startIdx);  // PrimËã·¨×îĞ¡Éú³ÉÊ÷
+
+STATUS GRAPH_LINK_MIN_GENERATED_TREE_KRUSKAL(GRAPH_LINK* graph, BIN_TREE** tree);  // ¿ËÂ³Ë¹¿¨¶ûËã·¨×îĞ¡Éú³ÉÊ÷
 
 
 #endif // !GRAPH_LINK_H

@@ -181,3 +181,284 @@ STATUS GRAPH_LINK_BFS(GRAPH_LINK* graph, void (*func)(ELEM_TYPE)) {
 	SEQ_QUEUE_DESTORY(&val_queue);
 	return STATUS_SUCCESS;
 }
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+BIN_TREE* _graph_link_min_generated_tree_create_tree_helper(GRAPH_LINK* graph, int* edgeFromIdxes, int* edgeToIdxes, int idx, BOOLEAN* isAccess) {
+	BIN_TREE* t = (BIN_TREE*)malloc(sizeof(BIN_TREE));
+	t->data = graph->nodes[idx].data;
+	t->left = NULL;
+	t->right = NULL;
+	t->leftIsChild = BOOLEAN_TRUE;
+	t->rightIsChild = BOOLEAN_TRUE;
+	int childCount = 0;
+	BIN_TREE* firstChild = NULL;
+	for (int i = 0; i < graph->nodeCount - 1; i++) {
+		if (!isAccess[i] && edgeFromIdxes[i] == idx) {
+			isAccess[i] = BOOLEAN_TRUE;
+			if (childCount == 0) {
+				t->left = _graph_link_min_generated_tree_create_tree_helper(graph, edgeFromIdxes, edgeToIdxes, edgeToIdxes[i], isAccess);
+				firstChild = t->left;
+				childCount++;
+			}
+			else {
+				firstChild->right = _graph_link_min_generated_tree_create_tree_helper(graph, edgeFromIdxes, edgeToIdxes, edgeToIdxes[i], isAccess);
+				firstChild = firstChild->right;
+				childCount++;
+			}
+		}
+		else if (!isAccess[i] && edgeToIdxes[i] == idx) {
+			isAccess[i] = BOOLEAN_TRUE;
+			if (childCount == 0) {
+				t->left = _graph_link_min_generated_tree_create_tree_helper(graph, edgeFromIdxes, edgeToIdxes, edgeFromIdxes[i], isAccess);
+				firstChild = t->left;
+				childCount++;
+			}
+			else {
+				firstChild->right = _graph_link_min_generated_tree_create_tree_helper(graph, edgeFromIdxes, edgeToIdxes, edgeFromIdxes[i], isAccess);
+				firstChild = firstChild->right;
+				childCount++;
+			}
+		}
+	}
+	return t;
+}
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+BIN_TREE* _graph_link_min_generated_tree_create_tree(GRAPH_LINK* graph, int* edgeFromIdxes, int* edgeToIdxes, int idx) {
+	BIN_TREE* t = NULL;
+	BOOLEAN* isAccess = (BOOLEAN*)malloc(sizeof(BOOLEAN) * (graph->nodeCount - 1));
+
+	for (int i = 0; i < graph->nodeCount - 1; i++) isAccess[i] = BOOLEAN_FALSE;
+
+	t = _graph_link_min_generated_tree_create_tree_helper(graph, edgeFromIdxes, edgeToIdxes, idx, isAccess);
+
+	free(isAccess);
+	return t;
+}
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+STATUS GRAPH_LINK_MIN_GENERATED_TREE_PRIM(GRAPH_LINK* graph, BIN_TREE** tree, int startIdx) {
+	if (startIdx < 0 || startIdx > graph->nodeCount - 1) return STATUS_FAIL;
+	int currentTopIdx = startIdx;
+	int* currentEdgePowerValues = (int*)malloc(sizeof(int) * graph->nodeCount);
+	int* currentEdgePrevIdxes = (int*)malloc(sizeof(int) * graph->nodeCount);
+	int* selectedEdgeFromIdxes = (int*)malloc(sizeof(int) * (graph->nodeCount - 1));
+	int* selectedEdgeToIdxes = (int*)malloc(sizeof(int) * (graph->nodeCount - 1));
+	int selectedEdgePos = 0;
+
+	for (int i = 0; i < graph->nodeCount; i++) {
+		currentEdgePowerValues[i] = INT_MAX;
+		currentEdgePrevIdxes[i] = -1;
+	}
+	for (int i = 0; i < graph->nodeCount - 1; i++) {
+		selectedEdgeFromIdxes[i] = -1;
+		selectedEdgeToIdxes[i] = -1;
+	}
+
+	while (selectedEdgePos < graph->nodeCount - 1) {
+		int minIdx = 0, minPower = INT_MAX;
+		for (int i = 0; i < graph->nodeCount; i++) {
+			if (currentEdgePowerValues[i] > -1) {
+				if (i == currentTopIdx) {
+					currentEdgePowerValues[i] = -1;
+				}
+				else {
+					// 找出当前最新访问节点到遍历节点的边的权值
+					int a2bPower = 0, b2aPower = 0;
+					GRAPH_LINK_ARC* p = graph->nodes[currentTopIdx].arc;
+					while (p != NULL) {
+						if (p->index == i) {
+							a2bPower = p->power;
+							break;
+						}
+						p = p->next;
+					}
+					p = graph->nodes[i].arc;
+					while (p != NULL) {
+						if (p->index == currentTopIdx) {
+							b2aPower = p->power;
+							break;
+						}
+						p = p->next;
+					}
+					if (a2bPower > 0
+						&& b2aPower > 0
+						&& a2bPower == b2aPower
+						&& a2bPower < currentEdgePowerValues[i]) {
+						currentEdgePowerValues[i] = a2bPower;
+						currentEdgePrevIdxes[i] = currentTopIdx;
+					}
+				}
+			}
+			if (currentEdgePowerValues[i] > -1 && currentEdgePowerValues[i] < minPower) {
+				minPower = currentEdgePowerValues[i];
+				minIdx = i;
+			}
+		}
+		selectedEdgeFromIdxes[selectedEdgePos] = currentEdgePrevIdxes[minIdx];
+		selectedEdgeToIdxes[selectedEdgePos] = minIdx;
+		currentTopIdx = minIdx;
+		selectedEdgePos++;
+	}
+
+	*tree = _graph_link_min_generated_tree_create_tree(graph, selectedEdgeFromIdxes, selectedEdgeToIdxes, startIdx);
+
+	free(currentEdgePowerValues);
+	free(currentEdgePrevIdxes);
+	free(selectedEdgeFromIdxes);
+	free(selectedEdgeToIdxes);
+	return STATUS_SUCCESS;
+}
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+BOOLEAN _graph_link_min_generated_tree_has_loop(int* edgeFromIdxes, int* edgeToIdxes, int edgeCount) {
+	SEQ_STACK s;
+	BOOLEAN* isAccess = (BOOLEAN*)malloc(sizeof(BOOLEAN) * edgeCount);
+	int accessCount = 0;
+	int currentStartIdx = -1, currentEndIdx = -1;
+
+	SEQ_STACK_INIT(&s);
+	for (int i = 0; i < edgeCount; i++) isAccess[i] = BOOLEAN_FALSE;
+
+	while (accessCount < edgeCount) {
+		if (s.base == s.top) {
+			int findIdx = -1;
+			for (int i = 0; i < edgeCount; i++) {
+				if (!isAccess[i]) {
+					findIdx = i;
+					break;
+				}
+			}
+			if (findIdx > -1) {
+				SEQ_STACK_PUSH(&s, edgeFromIdxes[findIdx]);
+				currentStartIdx = edgeFromIdxes[findIdx];
+				currentEndIdx = edgeToIdxes[findIdx];
+				isAccess[findIdx] = BOOLEAN_TRUE;
+				accessCount++;
+			}
+		}
+		else {
+			BOOLEAN isFindNext = BOOLEAN_FALSE;
+			for (int i = 0; i < edgeCount; i++) {
+				if (!isAccess[i]) {
+					if (edgeFromIdxes[i] == currentEndIdx) {
+						SEQ_STACK_PUSH(&s, currentEndIdx);
+						currentEndIdx = edgeToIdxes[i];
+						isAccess[i] = BOOLEAN_TRUE;
+						accessCount++;
+						isFindNext = BOOLEAN_TRUE;
+						break;
+					}
+					else if (edgeToIdxes[i] == currentEndIdx) {
+						SEQ_STACK_PUSH(&s, currentEndIdx);
+						currentEndIdx = edgeFromIdxes[i];
+						isAccess[i] = BOOLEAN_TRUE;
+						accessCount++;
+						isFindNext = BOOLEAN_TRUE;
+						break;
+					}
+				}
+			}
+			if (!isFindNext) {
+				SEQ_STACK_POP(&s, &currentEndIdx);
+			}
+			else {
+				if (currentEndIdx == currentStartIdx) {
+					free(isAccess);
+					SEQ_STACK_DESTORY(&s);
+					return BOOLEAN_TRUE;
+				}
+			}
+		}
+	}
+
+	free(isAccess);
+	SEQ_STACK_DESTORY(&s);
+	return BOOLEAN_FALSE;
+}
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+STATUS GRAPH_LINK_MIN_GENERATED_TREE_KRUSKAL(GRAPH_LINK* graph, BIN_TREE** tree) {
+	int* selectedEdgeFromIdxes = (int*)malloc(sizeof(int) * (graph->nodeCount - 1));
+	int* selectedEdgeToIdxes = (int*)malloc(sizeof(int) * (graph->nodeCount - 1));
+	int selectedEdgePos = 0;
+	SEQ_LIST powerList, edgeFromIdxList, edgeToIdxList;
+
+	for (int i = 0; i < graph->nodeCount - 1; i++) {
+		selectedEdgeFromIdxes[i] = -1;
+		selectedEdgeToIdxes[i] = -1;
+	}
+	SEQ_LIST_INIT(&powerList);
+	SEQ_LIST_INIT(&edgeFromIdxList);
+	SEQ_LIST_INIT(&edgeToIdxList);
+
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = i; k < graph->nodeCount; k++) {
+			// 找出两节点之间边的权值
+			int a2bPower = 0, b2aPower = 0;
+			GRAPH_LINK_ARC* p = graph->nodes[i].arc;
+			while (p != NULL) {
+				if (p->index == k) {
+					a2bPower = p->power;
+					break;
+				}
+				p = p->next;
+			}
+			p = graph->nodes[k].arc;
+			while (p != NULL) {
+				if (p->index == i) {
+					b2aPower = p->power;
+					break;
+				}
+				p = p->next;
+			}
+			if (i != k
+				&& a2bPower > 0
+				&& b2aPower > 0
+				&& a2bPower == b2aPower) {
+				SEQ_LIST_ADD(&powerList, a2bPower);
+				SEQ_LIST_ADD(&edgeFromIdxList, i);
+				SEQ_LIST_ADD(&edgeToIdxList, k);
+			}
+		}
+	}
+
+	for (int i = powerList.length; i > 0; i--) {
+		BOOLEAN isSwap = BOOLEAN_FALSE;
+		for (int k = 1; k < i; k++) {
+			if (powerList.data[k] < powerList.data[k - 1]) {
+				isSwap = BOOLEAN_TRUE;
+				int tmp = powerList.data[k];
+				powerList.data[k] = powerList.data[k - 1];
+				powerList.data[k - 1] = tmp;
+				tmp = edgeFromIdxList.data[k];
+				edgeFromIdxList.data[k] = edgeFromIdxList.data[k - 1];
+				edgeFromIdxList.data[k - 1] = tmp;
+				tmp = edgeToIdxList.data[k];
+				edgeToIdxList.data[k] = edgeToIdxList.data[k - 1];
+				edgeToIdxList.data[k - 1] = tmp;
+			}
+		}
+		if (!isSwap) break;
+	}
+
+	int edgeIdx = 0;
+	while (selectedEdgePos < graph->nodeCount - 1 && edgeIdx < edgeFromIdxList.length) {
+		selectedEdgeFromIdxes[selectedEdgePos] = edgeFromIdxList.data[edgeIdx];
+		selectedEdgeToIdxes[selectedEdgePos] = edgeToIdxList.data[edgeIdx];
+		edgeIdx++;
+		selectedEdgePos++;
+		if (_graph_link_min_generated_tree_has_loop(selectedEdgeFromIdxes, selectedEdgeToIdxes, selectedEdgePos)) {
+			selectedEdgePos--;
+		}
+	}
+
+	*tree = _graph_link_min_generated_tree_create_tree(graph, selectedEdgeFromIdxes, selectedEdgeToIdxes, 0);
+
+	free(selectedEdgeFromIdxes);
+	free(selectedEdgeToIdxes);
+	SEQ_LIST_DESTORY(&powerList);
+	SEQ_LIST_DESTORY(&edgeFromIdxList);
+	SEQ_LIST_DESTORY(&edgeToIdxList);
+	return STATUS_SUCCESS;
+}

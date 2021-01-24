@@ -4,6 +4,8 @@
 #include "basis.h"
 #include "stack.h"
 #include "queue.h"
+#include "bin_tree.h"
+#include "seq_list.h"
 
 // 图邻接矩阵定义
 typedef struct _graph_matrix {
@@ -29,6 +31,10 @@ STATUS GRAPH_MATRIX_DESTROY(GRAPH_MATRIX* graph);  // 销毁
 STATUS GRAPH_MATRIX_DFS(GRAPH_MATRIX* graph , void (*func)(ELEM_TYPE));  // 深度优先遍历
 
 STATUS GRAPH_MATRIX_BFS(GRAPH_MATRIX* graph, void (*func)(ELEM_TYPE));  // 广度优先遍历
+
+STATUS GRAPH_MATRIX_MIN_GENERATED_TREE_PRIM(GRAPH_MATRIX* graph , BIN_TREE **tree , int startIdx);  // Prim算法最小生成树
+
+STATUS GRAPH_MATRIX_MIN_GENERATED_TREE_KRUSKAL(GRAPH_MATRIX* graph, BIN_TREE** tree);  // 克鲁斯卡尔算法最小生成树
 
 
 
