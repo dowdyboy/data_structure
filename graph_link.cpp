@@ -462,3 +462,179 @@ STATUS GRAPH_LINK_MIN_GENERATED_TREE_KRUSKAL(GRAPH_LINK* graph, BIN_TREE** tree)
 	SEQ_LIST_DESTORY(&edgeToIdxList);
 	return STATUS_SUCCESS;
 }
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+STATUS GRAPH_LINK_SHORTEST_ROUTE_DIJKSTRA(GRAPH_LINK* graph, int idx, int*** result) {
+	if (idx < 0 || idx > graph->nodeCount - 1) return STATUS_FAIL;
+	int currentNodeIdx = idx;
+	int currentFullPower = 0;
+	int* currentNodePowers = (int*)malloc(sizeof(int) * graph->nodeCount);
+	int* currentRecordPowers = (int*)malloc(sizeof(int) * graph->nodeCount);
+	int** currentRoutes = (int**)malloc(sizeof(int*) * graph->nodeCount);
+	int selectedRouteCount = 0;
+
+	for (int i = 0; i < graph->nodeCount; i++) {
+		currentNodePowers[i] = INT_MAX;
+		currentRecordPowers[i] = i == idx ? 0 : -1;
+	}
+	for (int i = 0; i < graph->nodeCount; i++) currentRoutes[i] = (int*)malloc(sizeof(int) * graph->nodeCount);
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = 0; k < graph->nodeCount; k++) {
+			currentRoutes[i][k] = -1;
+		}
+	}
+
+	while (selectedRouteCount < graph->nodeCount - 1) {
+		int minPower = INT_MAX, minIdx = -1;
+		for (int i = 0; i < graph->nodeCount; i++) {
+			if (currentNodeIdx == i) {
+				currentNodePowers[i] = -1;
+			}
+			else {
+				if (currentNodePowers[i] > -1) {
+					int currentNodeIdx2iPower = 0;
+					GRAPH_LINK_ARC* p = graph->nodes[currentNodeIdx].arc;
+					while (p != NULL) {
+						if (p->index == i) {
+							currentNodeIdx2iPower = p->power;
+							break;
+						}
+						p = p->next;
+					}
+					if (currentNodeIdx2iPower > 0
+						&& currentFullPower + currentNodeIdx2iPower < currentNodePowers[i]) {
+						currentNodePowers[i] = currentFullPower + currentNodeIdx2iPower;
+						currentRecordPowers[i] = currentNodePowers[i];
+						if (currentNodeIdx == idx) {
+							currentRoutes[i][0] = currentNodeIdx;
+							currentRoutes[i][1] = i;
+						}
+						else {
+							int newIdx = -1;
+							for (int k = 0; k < graph->nodeCount; k++) {
+								currentRoutes[i][k] = currentRoutes[currentNodeIdx][k];
+								if (currentRoutes[currentNodeIdx][k] == -1 && newIdx == -1) {
+									newIdx = k;
+								}
+							}
+							currentRoutes[i][newIdx] = i;
+						}
+					}
+					if (currentNodePowers[i] <= minPower) {
+						minPower = currentNodePowers[i];
+						minIdx = i;
+					}
+				}
+			}
+		}
+		if (minIdx > -1) {
+			selectedRouteCount++;
+			currentNodeIdx = minIdx;
+			currentFullPower = minPower;
+		}
+	}
+
+	*result = (int**)malloc(sizeof(int*) * graph->nodeCount);
+	for (int i = 0; i < graph->nodeCount; i++) {
+		(*result)[i] = (int*)malloc(sizeof(int) * (graph->nodeCount + 1));
+	}
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = 0; k < graph->nodeCount + 1; k++) {
+			(*result)[i][k] = k == 0 ? currentRecordPowers[i] : currentRoutes[i][k - 1];
+		}
+	}
+
+	free(currentNodePowers);
+	free(currentRecordPowers);
+	for (int i = 0; i < graph->nodeCount; i++) {
+		free(currentRoutes[i]);
+	}
+	free(currentRoutes);
+	return STATUS_SUCCESS;
+}
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+STATUS GRAPH_LINK_SHORTEST_ROUTE_FLOYD(GRAPH_LINK* graph, int*** powerResult, int*** pathResult) {
+	int** powerMatrix = (int**)malloc(sizeof(int*) * graph->nodeCount);
+	int** pathMatrix = (int**)malloc(sizeof(int*) * graph->nodeCount);
+
+	for (int i = 0; i < graph->nodeCount; i++) {
+		powerMatrix[i] = (int*)malloc(sizeof(int) * graph->nodeCount);
+		pathMatrix[i] = (int*)malloc(sizeof(int) * graph->nodeCount);
+	}
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = 0; k < graph->nodeCount; k++) {
+			int i2kPower = 0;
+			GRAPH_LINK_ARC* p = graph->nodes[i].arc;
+			while (p != NULL) {
+				if (p->index == k) {
+					i2kPower = p->power;
+					break;
+				}
+				p = p->next;
+			}
+			powerMatrix[i][k] = i2kPower > 0 ? i2kPower : INT_MAX;
+			if (i == k) powerMatrix[i][k] = 0;
+			pathMatrix[i][k] = i2kPower > 0 ? i : -1;
+		}
+	}
+
+	for (int x = 0; x < graph->nodeCount; x++) {
+		for (int i = 0; i < graph->nodeCount; i++) {
+			if (i != x) {
+				for (int k = 0; k < graph->nodeCount; k++) {
+					if (k != x && i != k) {
+						int i2kPower = powerMatrix[i][k];
+						int i2xPower = powerMatrix[i][x];
+						int x2kPower = powerMatrix[x][k];
+						if (i2xPower != INT_MAX
+							&& x2kPower != INT_MAX
+							&& i2xPower + x2kPower < i2kPower) {
+							powerMatrix[i][k] = i2xPower + x2kPower;
+							pathMatrix[i][k] = pathMatrix[x][k];
+						}
+					}
+				}
+			}
+		}
+	}
+
+	*powerResult = powerMatrix;
+	*pathResult = pathMatrix;
+
+	return STATUS_SUCCESS;
+}
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+STATUS GRAPH_LINK_SHORTEST_ROUTE_FLOYD_GET_RESULT(GRAPH_LINK* graph, int** powerMatrix, int** pathMatrix, int fromIdx, int toIdx, int** result) {
+	if (fromIdx < 0 || fromIdx > graph->nodeCount - 1 || toIdx < 0 || toIdx > graph->nodeCount - 1)
+		return STATUS_FAIL;
+	int* route = (int*)malloc(sizeof(int) * (graph->nodeCount + 1));
+	int routeIdx = 1, beforeIdx = -1;
+
+	for (int i = 0; i < graph->nodeCount + 1; i++) route[i] = -1;
+
+	route[0] = powerMatrix[fromIdx][toIdx] != INT_MAX ? powerMatrix[fromIdx][toIdx] : -1;
+	if (fromIdx != toIdx && powerMatrix[fromIdx][toIdx] != INT_MAX) {
+		route[routeIdx++] = toIdx;
+		beforeIdx = pathMatrix[fromIdx][toIdx];
+		route[routeIdx++] = beforeIdx;
+		while (beforeIdx != fromIdx) {
+			beforeIdx = pathMatrix[fromIdx][beforeIdx];
+			route[routeIdx++] = beforeIdx;
+		}
+		beforeIdx = 1;
+		routeIdx--;
+		while (beforeIdx < routeIdx) {
+			int tmp = route[beforeIdx];
+			route[beforeIdx] = route[routeIdx];
+			route[routeIdx] = tmp;
+			beforeIdx++;
+			routeIdx--;
+		}
+	}
+
+	*result = route;
+
+	return STATUS_SUCCESS;
+}

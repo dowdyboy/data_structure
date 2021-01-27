@@ -443,3 +443,198 @@ STATUS GRAPH_MATRIX_MIN_GENERATED_TREE_KRUSKAL(GRAPH_MATRIX* graph, BIN_TREE** t
 	SEQ_LIST_DESTORY(&edgeToIdxList);
 	return STATUS_SUCCESS;
 }
+
+
+STATUS GRAPH_MATRIX_SHORTEST_ROUTE_DIJKSTRA(GRAPH_MATRIX* graph, int idx, int*** result) {
+	if (idx < 0 || idx > graph->nodeCount - 1) return STATUS_FAIL;
+	// 辅助变量
+	int currentNodeIdx = idx;  // 当前遍历到的节点索引
+	int currentFullPower = 0;  // 从源点到当前遍历节点路径的累计权值
+	int* currentNodePowers = (int*)malloc(sizeof(int) * graph->nodeCount);  // 当前从源点到各个节点的路径的累计权值，用于程序控制
+	int* currentRecordPowers = (int*)malloc(sizeof(int) * graph->nodeCount);  // 当前从源点到各个节点的路径的累计权值记录
+	int** currentRoutes = (int**)malloc(sizeof(int*) * graph->nodeCount);  // 当前从单源点到各个节点的路径记录
+	int selectedRouteCount = 0;  // 已经找到的最短路径的个数
+
+	// 初始化辅助变量
+	for (int i = 0; i < graph->nodeCount; i++) {
+		// 初始设置为无穷大；记录值如果是从自己到自己，设置为0，否则初始设置为-1（表示不可达）
+		currentNodePowers[i] = INT_MAX;
+		currentRecordPowers[i] = i == idx ? 0 : -1;
+	}
+	for (int i = 0; i < graph->nodeCount; i++) currentRoutes[i] = (int*)malloc(sizeof(int) * graph->nodeCount);
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = 0; k < graph->nodeCount; k++) {
+			// 路径记录初始全部为-1
+			currentRoutes[i][k] = -1;
+		}
+	}
+
+	// 如果还没有找到足够的最短路径，执行以下循环
+	while (selectedRouteCount < graph->nodeCount - 1) {
+		// 设置标记，用于记录本轮寻找的最小权值和对应指向的节点索引
+		int minPower = INT_MAX, minIdx = -1;
+		for (int i = 0; i < graph->nodeCount; i++) {
+			if (currentNodeIdx == i) {
+				// 如果访问到的是当前遍历到的节点，将到该节点对应的权值设置为-1，表示到这个节点的最短路径已经找到
+				currentNodePowers[i] = -1;
+			}
+			else {
+				// 如果到i节点的最短路径还没有找到
+				if (currentNodePowers[i] > -1) {
+					// 判断如果从当前遍历节点到i节点是否有弧，并且累计权值小于当前到该节点所记录的权值
+					if (graph->relations[currentNodeIdx][i] > 0 
+						&& currentFullPower + graph->relations[currentNodeIdx][i] < currentNodePowers[i]) {
+						// 更新到i节点的记录权值
+						currentNodePowers[i] = currentFullPower + graph->relations[currentNodeIdx][i];
+						currentRecordPowers[i] = currentNodePowers[i];
+						// 更新到i节点的路径记录
+						if (currentNodeIdx == idx) {
+							// 如果是第一次记录，记录下单源点和i节点
+							currentRoutes[i][0] = currentNodeIdx;
+							currentRoutes[i][1] = i;
+						}
+						else {
+							// 如果不是第一次记录，则先将从单源点到当前遍历节点的路径记录复制到从单源点到i节点的位置上
+							// 然后再在到i节点路径记录的末尾加上i节点的索引
+							int newIdx = -1;
+							for (int k = 0; k < graph->nodeCount; k++) {
+								currentRoutes[i][k] = currentRoutes[currentNodeIdx][k];
+								if (currentRoutes[currentNodeIdx][k] == -1 && newIdx == -1) {
+									newIdx = k;
+								}
+							}
+							currentRoutes[i][newIdx] = i;
+						}
+					}
+					// 如果到i节点的累计权值小于记录的最小权值，则更新最小记录
+					if (currentNodePowers[i] <= minPower) {
+						minPower = currentNodePowers[i];
+						minIdx = i;
+					}
+				}
+			}
+		}
+		// 经过本轮遍历，通过最小标记，更新当前遍历节点索引和对应的累计权值；并增加计数器
+		if (minIdx > -1) {
+			selectedRouteCount++;
+			currentNodeIdx = minIdx;
+			currentFullPower = minPower;
+		}
+	}
+
+	// 输出结果，二维数组形式；第0列为从单源点到i节点的累计权值，从第1列开始为到i节点的路径记录，直到路径记录值为-1结束
+	*result = (int**)malloc(sizeof(int*) * graph->nodeCount);
+	for (int i = 0; i < graph->nodeCount; i++) {
+		(*result)[i] = (int*)malloc(sizeof(int) * (graph->nodeCount + 1));
+	}
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = 0; k < graph->nodeCount + 1; k++) {
+			(*result)[i][k] = k == 0 ? currentRecordPowers[i] : currentRoutes[i][k - 1];
+		}
+	}
+
+	// 释放空间
+	free(currentNodePowers);
+	free(currentRecordPowers);
+	for (int i = 0; i < graph->nodeCount; i++) {
+		free(currentRoutes[i]);
+	}
+	free(currentRoutes);
+	return STATUS_SUCCESS;
+}
+
+STATUS GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD(GRAPH_MATRIX* graph, int*** powerResult, int*** pathResult) {
+	// 创建累计权值矩阵，和路径记录矩阵
+	int** powerMatrix = (int**)malloc(sizeof(int*) * graph->nodeCount);
+	int** pathMatrix = (int**)malloc(sizeof(int*) * graph->nodeCount);
+
+	// 根据图初始化变量
+	for (int i = 0; i < graph->nodeCount; i++) {
+		powerMatrix[i] = (int*)malloc(sizeof(int) * graph->nodeCount);
+		pathMatrix[i] = (int*)malloc(sizeof(int) * graph->nodeCount);
+	}
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = 0; k < graph->nodeCount; k++) {
+			// 如果有弧，则权值矩阵对应位置设置为弧的权值，否则设置为无穷大
+			powerMatrix[i][k] = graph->relations[i][k] > 0 ? graph->relations[i][k] : INT_MAX;
+			// 如果是（i，i）（矩阵对角）的位置，修正权值矩阵值为0
+			if (i == k) powerMatrix[i][k] = 0;
+			// 如果i到k有弧，路径矩阵从i到k的位置设置为i，表示到k节点的前置节点为i，否则设置为-1表示不可达
+			pathMatrix[i][k] = graph->relations[i][k] > 0 ? i : -1;
+		}
+	}
+
+	// 图有n个节点，则执行n次遍历
+	for (int x = 0; x < graph->nodeCount; x++) {
+		for (int i = 0; i < graph->nodeCount; i++) {
+			// i等于x不执行内循环，因为从i经过i再到k累计路径权值不会有任何变化
+			if (i != x) {
+				for (int k = 0; k < graph->nodeCount; k++) {
+					// 同理，k等于x和i等于k也不执行内部逻辑
+					if (k != x && i != k) {
+						// 如果i到x可达，x到k可达，并且这两段的累计权值比当前从i到k的累计权值小
+						// 则更新对应位置权值矩阵的值为更小的值
+						// 更新对应位置路径矩阵的值为从x到k的前置节点的索引
+						int i2kPower = powerMatrix[i][k];
+						int i2xPower = powerMatrix[i][x];
+						int x2kPower = powerMatrix[x][k];
+						if (i2xPower != INT_MAX 
+							&& x2kPower != INT_MAX 
+							&& i2xPower + x2kPower < i2kPower) {
+							powerMatrix[i][k] = i2xPower + x2kPower;
+							pathMatrix[i][k] = pathMatrix[x][k];
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// 输出结果
+	*powerResult = powerMatrix;
+	*pathResult = pathMatrix;
+
+	return STATUS_SUCCESS;
+}
+
+STATUS GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD_GET_RESULT(GRAPH_MATRIX* graph, int** powerMatrix, int** pathMatrix, int fromIdx, int toIdx, int** result) {
+	if (fromIdx < 0 || fromIdx > graph->nodeCount - 1 || toIdx < 0 || toIdx > graph->nodeCount - 1 )
+		return STATUS_FAIL;
+	// 创建路径记录数组
+	int* route = (int*)malloc(sizeof(int) * (graph->nodeCount + 1));
+	int routeIdx = 1,beforeIdx = -1;
+
+	// 初始化变量，路径记录数组值设置为-1
+	for (int i = 0; i < graph->nodeCount + 1; i++) route[i] = -1;
+
+	// 0地址记录从起始节点到终止节点的累计权值
+	route[0] = powerMatrix[fromIdx][toIdx] != INT_MAX? powerMatrix[fromIdx][toIdx]:-1;
+	// 如果不是从自身到自身，并且从起始节点到终止节点可达
+	if (fromIdx != toIdx && powerMatrix[fromIdx][toIdx] != INT_MAX) {
+		// 先将终止节点记录
+		route[routeIdx++] = toIdx;
+		// 再从路径矩阵中找出从起始到终止节点的前置节点索引，并记录
+		beforeIdx = pathMatrix[fromIdx][toIdx];
+		route[routeIdx++] = beforeIdx;
+		// 如果前置节点不是起始节点，则再查找从起始节点到前置节点的前置节点，并记录
+		while (beforeIdx != fromIdx) {
+			beforeIdx = pathMatrix[fromIdx][beforeIdx];
+			route[routeIdx++] = beforeIdx;
+		}
+		// 由于以上记录是倒序记录，下面的代码是将记录逆序
+		beforeIdx = 1;
+		routeIdx--;
+		while (beforeIdx < routeIdx) {
+			int tmp = route[beforeIdx];
+			route[beforeIdx] = route[routeIdx];
+			route[routeIdx] = tmp;
+			beforeIdx++;
+			routeIdx--;
+		}
+	}
+
+	// 输出结果
+	*result = route;
+	
+	return STATUS_SUCCESS;
+}

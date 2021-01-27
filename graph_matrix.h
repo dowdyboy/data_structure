@@ -36,7 +36,11 @@ STATUS GRAPH_MATRIX_MIN_GENERATED_TREE_PRIM(GRAPH_MATRIX* graph , BIN_TREE **tre
 
 STATUS GRAPH_MATRIX_MIN_GENERATED_TREE_KRUSKAL(GRAPH_MATRIX* graph, BIN_TREE** tree);  // 克鲁斯卡尔算法最小生成树
 
+STATUS GRAPH_MATRIX_SHORTEST_ROUTE_DIJKSTRA(GRAPH_MATRIX* graph, int idx, int*** result);  // 迪杰斯特拉算法求单源点最短路径
 
+STATUS GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD(GRAPH_MATRIX* graph, int*** powerResult, int*** pathResult);  // 弗洛伊德算法求两点间最短路径
+
+STATUS GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD_GET_RESULT(GRAPH_MATRIX* graph, int** powerMatrix, int** pathMatrix, int fromIdx , int toIdx , int** result);  // 从弗洛伊德算法的结果矩阵中获取指定节点的最短路径
 
 
 #endif // !GRAPH_MATRIX_H

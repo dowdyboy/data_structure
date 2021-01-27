@@ -328,6 +328,71 @@ void testGraphMatrix() {
 	BIN_TREE_ERGODIC_DLR(t2, myPrint);
 
 	GRAPH_MATRIX_DESTROY(&g2);
+
+	printf("\n");
+
+	GRAPH_MATRIX g3;
+	int** dijResult = NULL;
+	int** powerMat0 = NULL, ** pathMat0 = NULL;
+	int* pathRet0 = NULL;
+	GRAPH_MATRIX_INIT(&g3, 6);
+	for (int i = 0; i < g3.nodeCount; i++) {
+		GRAPH_MATRIX_PUT_NODE_VALUE(&g3, i, i);
+	}
+	GRAPH_MATRIX_ADD_ARC(&g3, 0, 2, 10);
+	GRAPH_MATRIX_ADD_ARC(&g3, 0, 4, 30);
+	GRAPH_MATRIX_ADD_ARC(&g3, 0, 5, 100);
+	GRAPH_MATRIX_ADD_ARC(&g3, 1, 2, 5);
+	GRAPH_MATRIX_ADD_ARC(&g3, 2, 3, 50);
+	GRAPH_MATRIX_ADD_ARC(&g3, 3, 5, 10);
+	GRAPH_MATRIX_ADD_ARC(&g3, 4, 3, 20);
+	GRAPH_MATRIX_ADD_ARC(&g3, 4, 5, 60);
+	printGraphMatrix(g3);
+
+	GRAPH_MATRIX_SHORTEST_ROUTE_DIJKSTRA(&g3,0,&dijResult);
+
+	printf("\n");
+	for (int i = 0; i < g3.nodeCount; i++) {
+		for (int k = 0; k < g3.nodeCount + 1; k++) {
+			printf(" %d ", dijResult[i][k]);
+		}
+		printf("\n");
+	}
+
+	GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD(&g3, &powerMat0, &pathMat0);
+	GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD_GET_RESULT(&g3, powerMat0, pathMat0, 3, 5, &pathRet0);
+
+	GRAPH_MATRIX_DESTROY(&g3);
+
+	printf("\n");
+
+	GRAPH_MATRIX g4;
+	int** powerMat = NULL, **pathMat = NULL;
+	int* pathResult = NULL;
+	GRAPH_MATRIX_INIT(&g4, 4);
+	for (int i = 0; i < g4.nodeCount; i++) {
+		GRAPH_MATRIX_PUT_NODE_VALUE(&g4, i, i);
+	}
+	GRAPH_MATRIX_ADD_ARC(&g4, 0, 1, 1);
+	GRAPH_MATRIX_ADD_ARC(&g4, 0, 3, 4);
+	GRAPH_MATRIX_ADD_ARC(&g4, 1, 2, 9);
+	GRAPH_MATRIX_ADD_ARC(&g4, 1, 3, 2);
+	GRAPH_MATRIX_ADD_ARC(&g4, 2, 0, 3);
+	GRAPH_MATRIX_ADD_ARC(&g4, 2, 1, 5);
+	GRAPH_MATRIX_ADD_ARC(&g4, 2, 3, 8);
+	GRAPH_MATRIX_ADD_ARC(&g4, 3, 2, 6);
+	printGraphMatrix(g4);
+	printf("\n");
+
+	GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD(&g4,&powerMat,&pathMat);
+	GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD_GET_RESULT(&g4, powerMat, pathMat, 3, 1, &pathResult);
+
+	for (int i = 0; i < g4.nodeCount+1; i++) {
+		printf(" %d ", pathResult[i]);
+	}
+
+	GRAPH_MATRIX_DESTROY(&g4);
+
 }
 
 void testGraphLink() {
@@ -382,10 +447,77 @@ void testGraphLink() {
 	BIN_TREE_ERGODIC_DLR(t2, myPrint);
 
 	GRAPH_LINK_DESTROY(&g2);
+
+	printf("\n");
+
+	GRAPH_LINK g3;
+	int** dijResult = NULL;
+	int** powerMat0 = NULL, ** pathMat0 = NULL;
+	int* pathRet0 = NULL;
+	GRAPH_LINK_INIT(&g3, 6);
+	for (int i = 0; i < g3.nodeCount; i++) {
+		GRAPH_LINK_PUT_NODE_VALUE(&g3, i, i);
+	}
+	GRAPH_LINK_ADD_ARC(&g3, 0, 2, 10);
+	GRAPH_LINK_ADD_ARC(&g3, 0, 4, 30);
+	GRAPH_LINK_ADD_ARC(&g3, 0, 5, 100);
+	GRAPH_LINK_ADD_ARC(&g3, 1, 2, 5);
+	GRAPH_LINK_ADD_ARC(&g3, 2, 3, 50);
+	GRAPH_LINK_ADD_ARC(&g3, 3, 5, 10);
+	GRAPH_LINK_ADD_ARC(&g3, 4, 3, 20);
+	GRAPH_LINK_ADD_ARC(&g3, 4, 5, 60);
+	printGraphLink(g3);
+
+	GRAPH_LINK_SHORTEST_ROUTE_DIJKSTRA(&g3, 0, &dijResult);
+
+	printf("\n");
+	for (int i = 0; i < g3.nodeCount; i++) {
+		for (int k = 0; k < g3.nodeCount + 1; k++) {
+			printf(" %d ", dijResult[i][k]);
+		}
+		printf("\n");
+	}
+
+	GRAPH_LINK_SHORTEST_ROUTE_FLOYD(&g3, &powerMat0, &pathMat0);
+	GRAPH_LINK_SHORTEST_ROUTE_FLOYD_GET_RESULT(&g3, powerMat0, pathMat0, 3, 5, &pathRet0);
+
+	GRAPH_LINK_DESTROY(&g3);
+
+	printf("\n");
+
+	GRAPH_LINK g4;
+	int** powerMat = NULL, ** pathMat = NULL;
+	int* pathResult = NULL;
+	GRAPH_LINK_INIT(&g4, 4);
+	for (int i = 0; i < g4.nodeCount; i++) {
+		GRAPH_LINK_PUT_NODE_VALUE(&g4, i, i);
+	}
+	GRAPH_LINK_ADD_ARC(&g4, 0, 1, 1);
+	GRAPH_LINK_ADD_ARC(&g4, 0, 3, 4);
+	GRAPH_LINK_ADD_ARC(&g4, 1, 2, 9);
+	GRAPH_LINK_ADD_ARC(&g4, 1, 3, 2);
+	GRAPH_LINK_ADD_ARC(&g4, 2, 0, 3);
+	GRAPH_LINK_ADD_ARC(&g4, 2, 1, 5);
+	GRAPH_LINK_ADD_ARC(&g4, 2, 3, 8);
+	GRAPH_LINK_ADD_ARC(&g4, 3, 2, 6);
+	printGraphLink(g4);
+	printf("\n");
+
+	GRAPH_LINK_SHORTEST_ROUTE_FLOYD(&g4, &powerMat, &pathMat);
+	GRAPH_LINK_SHORTEST_ROUTE_FLOYD_GET_RESULT(&g4, powerMat, pathMat, 3, 1, &pathResult);
+
+	for (int i = 0; i < g4.nodeCount + 1; i++) {
+		printf(" %d ", pathResult[i]);
+	}
+
+	GRAPH_LINK_DESTROY(&g4);
+
 }
 
 int main() {
 
+	testGraphMatrix();
+	printf("\n=================================\n");
 	testGraphLink();
 
 	return 0;
