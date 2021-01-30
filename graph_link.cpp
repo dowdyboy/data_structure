@@ -638,3 +638,187 @@ STATUS GRAPH_LINK_SHORTEST_ROUTE_FLOYD_GET_RESULT(GRAPH_LINK* graph, int** power
 
 	return STATUS_SUCCESS;
 }
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+int _graph_link_topology_sort_find_next_node(int** arcMatrix, int nodeCount, int* isAccess) {
+	int findIdx = -1;
+	for (int k = 0; k < nodeCount; k++) {
+		if (!isAccess[k]) {
+			BOOLEAN isFind = BOOLEAN_TRUE;
+			for (int i = 0; i < nodeCount; i++) {
+				if (arcMatrix[i][k] != 0) {
+					isFind = BOOLEAN_FALSE;
+					break;
+				}
+			}
+			if (isFind) {
+				isAccess[k] = BOOLEAN_TRUE;
+				findIdx = k;
+				break;
+			}
+		}
+	}
+	if (findIdx > -1) {
+		for (int k = 0; k < nodeCount; k++) {
+			arcMatrix[findIdx][k] = 0;
+		}
+	}
+	return findIdx;
+}
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+STATUS GRAPH_LINK_TOPOLOGY_SORT(GRAPH_LINK* graph, int** result) {
+	int* topoArray = (int*)malloc(sizeof(int) * graph->nodeCount);
+	int topoArrayPos = 0;
+	int** arcMatrix = (int**)malloc(sizeof(int*) * graph->nodeCount);
+	BOOLEAN* isAccess = (BOOLEAN*)malloc(sizeof(BOOLEAN) * graph->nodeCount);
+	int selectedNodeCount = 0;
+	int findIdx = -1;
+
+	for (int i = 0; i < graph->nodeCount; i++) {
+		topoArray[i] = -1;
+		isAccess[i] = BOOLEAN_FALSE;
+	}
+	for (int i = 0; i < graph->nodeCount; i++) {
+		arcMatrix[i] = (int*)malloc(sizeof(int) * graph->nodeCount);
+	}
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = 0; k < graph->nodeCount; k++) {
+			arcMatrix[i][k] = 0;
+		}
+		GRAPH_LINK_ARC* p = graph->nodes[i].arc;
+		while (p != NULL) {
+			arcMatrix[i][p->index] = p->power;
+			p = p->next;
+		}
+	}
+
+	findIdx = _graph_link_topology_sort_find_next_node(arcMatrix, graph->nodeCount, isAccess);
+	while (findIdx > -1) {
+		topoArray[topoArrayPos++] = findIdx;
+		selectedNodeCount++;
+		findIdx = _graph_link_topology_sort_find_next_node(arcMatrix, graph->nodeCount, isAccess);
+	}
+
+	for (int i = 0; i < graph->nodeCount; i++) {
+		free(arcMatrix[i]);
+	}
+	free(arcMatrix);
+	free(isAccess);
+	if (selectedNodeCount < graph->nodeCount) {
+		free(topoArray);
+		return STATUS_FAIL;
+	}
+	else {
+		*result = topoArray;
+		return STATUS_SUCCESS;
+	}
+}
+
+// 算法思路与邻接矩阵版相同，注释参见graph_matrix.cpp
+STATUS GRAPH_LINK_KEY_ROUTE(GRAPH_LINK* graph, int** result) {
+	int* topoResult = NULL;
+	int topoIdx = 0;
+
+	if (GRAPH_LINK_TOPOLOGY_SORT(graph, &topoResult) == STATUS_SUCCESS) {
+		int* nodeE = (int*)malloc(sizeof(int) * graph->nodeCount);
+		int* nodeL = (int*)malloc(sizeof(int) * graph->nodeCount);
+		BOOLEAN* isKeyNode = (BOOLEAN*)malloc(sizeof(BOOLEAN) * graph->nodeCount);
+		int* keyRoute = (int*)malloc(sizeof(int) * graph->nodeCount);
+		int keyRoutePos = 0;
+
+		for (int i = 0; i < graph->nodeCount; i++) {
+			nodeE[i] = 0;
+			nodeL[i] = 0;
+			isKeyNode[i] = BOOLEAN_FALSE;
+			keyRoute[i] = -1;
+		}
+
+		while (topoIdx < graph->nodeCount && topoResult[topoIdx] > -1) {
+			int curIdx = topoResult[topoIdx];
+			int maxPower = -1;
+			for (int i = 0; i < graph->nodeCount; i++) {
+				int i2curIdxPower = 0;
+				GRAPH_LINK_ARC* p = graph->nodes[i].arc;
+				while (p != NULL) {
+					if (p->index == curIdx) {
+						i2curIdxPower = p->power;
+						break;
+					}
+					p = p->next;
+				}
+				if (i2curIdxPower > 0) {
+					if (nodeE[i] + i2curIdxPower > maxPower) {
+						maxPower = nodeE[i] + i2curIdxPower;
+					}
+				}
+			}
+			nodeE[curIdx] = maxPower == -1 ? 0 : maxPower;
+			topoIdx++;
+		}
+
+		topoIdx--;
+		while (topoIdx > -1 && topoResult[topoIdx] > -1) {
+			int curIdx = topoResult[topoIdx];
+			int minPower = INT_MAX;
+			for (int k = 0; k < graph->nodeCount; k++) {
+				int curIdx2kPower = 0;
+				GRAPH_LINK_ARC* p = graph->nodes[curIdx].arc;
+				while (p != NULL) {
+					if (p->index == k) {
+						curIdx2kPower = p->power;
+						break;
+					}
+					p = p->next;
+				}
+				if (curIdx2kPower > 0) {
+					if (nodeL[k] - curIdx2kPower < minPower) {
+						minPower = nodeL[k] - curIdx2kPower;
+					}
+				}
+			}
+			nodeL[curIdx] = minPower == INT_MAX ? nodeE[curIdx] : minPower;
+			topoIdx--;
+		}
+
+		for (int i = 0; i < graph->nodeCount; i++) {
+			for (int k = 0; k < graph->nodeCount; k++) {
+				int i2kPower = 0;
+				GRAPH_LINK_ARC* p = graph->nodes[i].arc;
+				while (p != NULL) {
+					if (p->index == k) {
+						i2kPower = p->power;
+						break;
+					}
+					p = p->next;
+				}
+				if (i2kPower > 0) {
+					int arcE = nodeE[i];
+					int arcL = nodeL[k] - i2kPower;
+					if (arcE == arcL) {
+						isKeyNode[i] = BOOLEAN_TRUE;
+						isKeyNode[k] = BOOLEAN_TRUE;
+					}
+				}
+			}
+		}
+
+		topoIdx = 0;
+		while (topoIdx < graph->nodeCount && topoResult[topoIdx] > -1) {
+			if (isKeyNode[topoResult[topoIdx]]) {
+				keyRoute[keyRoutePos++] = topoResult[topoIdx];
+			}
+			topoIdx++;
+		}
+
+		*result = keyRoute;
+
+		free(nodeE);
+		free(nodeL);
+		free(isKeyNode);
+		return STATUS_SUCCESS;
+	}
+	else {
+		return STATUS_FAIL;
+	}
+}

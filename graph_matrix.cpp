@@ -638,3 +638,182 @@ STATUS GRAPH_MATRIX_SHORTEST_ROUTE_FLOYD_GET_RESULT(GRAPH_MATRIX* graph, int** p
 	
 	return STATUS_SUCCESS;
 }
+
+// 从弧的关系矩阵中找到拓扑排序的下一个节点索引
+int _graph_matrix_topology_sort_find_next_node(int** arcMatrix,int nodeCount,int* isAccess) {
+	int findIdx = -1;
+	// 寻找入度（矩阵中的列）为0的节点的索引
+	for (int k = 0; k < nodeCount; k++) {
+		// 如果这个k节点还未被选择
+		if (!isAccess[k]) {
+			BOOLEAN isFind = BOOLEAN_TRUE;
+			for (int i = 0; i < nodeCount; i++) {
+				// 判断k列的所有行是否都为0（即k节点的入度为0）
+				if (arcMatrix[i][k] != 0) {
+					isFind = BOOLEAN_FALSE;
+					break;
+				}
+			}
+			// 如果找到了，设置访问标记
+			if (isFind) {
+				isAccess[k] = BOOLEAN_TRUE;
+				findIdx = k;
+				break;
+			}
+		}
+	}
+	if (findIdx > -1) {
+		// 找到了，将该节点的所有出边全部删掉
+		for (int k = 0; k < nodeCount; k++) {
+			arcMatrix[findIdx][k] = 0;
+		}
+	}
+	return findIdx;
+}
+
+STATUS GRAPH_MATRIX_TOPOLOGY_SORT(GRAPH_MATRIX* graph, int** result) {
+	// 定义变量
+	int* topoArray = (int*)malloc(sizeof(int) * graph->nodeCount);  // 拓扑排序节点索引结果列表
+	int topoArrayPos = 0;  // 结果列表当前存储的位置
+	int** arcMatrix = (int**)malloc(sizeof(int*) * graph->nodeCount);  // 弧的关系矩阵
+	BOOLEAN* isAccess = (BOOLEAN*)malloc(sizeof(BOOLEAN) * graph->nodeCount);  // 节点是否已经排序的标志
+	int selectedNodeCount = 0;  // 已经排序的节点个数
+	int findIdx = -1;  // 找到的待排序节点的索引
+
+	// 初始化变量
+	for (int i = 0; i < graph->nodeCount; i++) {
+		topoArray[i] = -1;
+		isAccess[i] = BOOLEAN_FALSE;
+	}
+	for (int i = 0; i < graph->nodeCount; i++) {
+		arcMatrix[i] = (int*)malloc(sizeof(int) * graph->nodeCount);
+	}
+	for (int i = 0; i < graph->nodeCount; i++) {
+		for (int k = 0; k < graph->nodeCount; k++) {
+			// 弧关系直接拷贝图的关系变量
+			arcMatrix[i][k] = graph->relations[i][k];
+		}
+	}
+
+	// 寻找符合要求的节点进行排序，直到寻找失败
+	findIdx = _graph_matrix_topology_sort_find_next_node(arcMatrix,graph->nodeCount,isAccess);
+	while (findIdx > -1) {
+		topoArray[topoArrayPos++] = findIdx;
+		selectedNodeCount++;
+		findIdx = _graph_matrix_topology_sort_find_next_node(arcMatrix, graph->nodeCount,isAccess);
+	}
+
+	// 释放空间
+	for (int i = 0; i < graph->nodeCount; i++) {
+		free(arcMatrix[i]);
+	}
+	free(arcMatrix);
+	free(isAccess);
+	if (selectedNodeCount < graph->nodeCount) {
+		// 如果排序的节点个数小于总个数，说明还有节点无法被排序，图中有环，拓扑排序失败
+		free(topoArray);
+		return STATUS_FAIL;
+	}
+	else {
+		// 排序成功，输出结果
+		*result = topoArray;
+		return STATUS_SUCCESS;
+	}
+}
+
+STATUS GRAPH_MATRIX_KEY_ROUTE(GRAPH_MATRIX* graph, int** result) {
+	int* topoResult = NULL;  // 存储拓扑排序结果
+	int topoIdx = 0;
+
+	if (GRAPH_MATRIX_TOPOLOGY_SORT(graph, &topoResult) == STATUS_SUCCESS) {
+		// 如果拓扑排序成功，开始寻找关键路径
+		int* nodeE = (int*)malloc(sizeof(int) * graph->nodeCount);  // 存储每个节点的最早发生时间
+		int* nodeL = (int*)malloc(sizeof(int) * graph->nodeCount);  // 存储每个节点的最晚发生时间
+		BOOLEAN* isKeyNode = (BOOLEAN*)malloc(sizeof(BOOLEAN) * graph->nodeCount);  // 标记节点是否为关键节点
+		int* keyRoute = (int*)malloc(sizeof(int) * graph->nodeCount);  // 存储寻找的关键路径
+		int keyRoutePos = 0;
+
+		// 变量初始化
+		for (int i = 0; i < graph->nodeCount; i++) {
+			nodeE[i] = 0;
+			nodeL[i] = 0;
+			isKeyNode[i] = BOOLEAN_FALSE;
+			keyRoute[i] = -1;
+		}
+
+		// 计算节点最早发生时间，按照拓扑排序从前到后
+		while (topoIdx < graph->nodeCount && topoResult[topoIdx] > -1) {
+			int curIdx = topoResult[topoIdx];  // 拓扑排序当前节点索引
+			int maxPower = -1;  // 记录最大的时间值
+			for (int i = 0; i < graph->nodeCount; i++) {
+				// 如果当前节点的前驱的最早发生时间加上从该前驱到当前节点的时间大于所记录的最大时间
+				// 更新记录最大时间
+				if (graph->relations[i][curIdx] > 0) {
+					if (nodeE[i] + graph->relations[i][curIdx] > maxPower) {
+						maxPower = nodeE[i] + graph->relations[i][curIdx];
+					}
+				}
+			}
+			// 如果有最大时间值，则设置为当前节点的最早发生时间，否则设置为0（第一个节点）
+			nodeE[curIdx] = maxPower == -1 ? 0 : maxPower;
+			topoIdx++;
+		}
+
+		// 计算节点最晚发生时间，按照拓扑排序从后到前
+		topoIdx--;
+		while (topoIdx > -1 && topoResult[topoIdx] > -1) {
+			int curIdx = topoResult[topoIdx];
+			int minPower = INT_MAX;  // 记录最小的时间值
+			for (int k = 0; k < graph->nodeCount; k++) {
+				// 如果当前节点的后继节点的最晚发生时间减去从当前节点到后继节点的耗时，小于记录的最小值
+				// 更新记录最小时间值
+				if (graph->relations[curIdx][k] > 0) {
+					if (nodeL[k] - graph->relations[curIdx][k] < minPower) {
+						minPower = nodeL[k] - graph->relations[curIdx][k];
+					}
+				}
+			}
+			// 如果存在最小时间值，则设置为当前节点的最晚发生时间，否则设置为当前节点的最早发生时间（最后一个节点）
+			nodeL[curIdx] = minPower == INT_MAX ? nodeE[curIdx] : minPower;
+			topoIdx--;
+		}
+
+		// 计算活动（弧）最早/最晚开始时间
+		for (int i = 0; i < graph->nodeCount; i++) {
+			for (int k = 0; k < graph->nodeCount; k++) {
+				if (graph->relations[i][k] > 0) {
+					int arcE = nodeE[i];  // 活动最早开始时间（前节点最早发生时间）
+					int arcL = nodeL[k] - graph->relations[i][k];  // 活动最晚开始时间（后节点最晚发生时间减去活动耗时）
+					if (arcE == arcL) {
+						// 如果活动最早最晚发生时间一样，则为关键活动
+						// 标记两端节点为关键节点
+						isKeyNode[i] = BOOLEAN_TRUE;
+						isKeyNode[k] = BOOLEAN_TRUE;
+					}
+				}
+			}
+		}
+
+		// 遍历拓扑排序结果，从中找出关键节点并存储在输出结果中
+		topoIdx = 0;
+		while (topoIdx < graph->nodeCount && topoResult[topoIdx] > -1) {
+			if (isKeyNode[topoResult[topoIdx]]) {
+				keyRoute[keyRoutePos++] = topoResult[topoIdx];
+			}
+			topoIdx++;
+		}
+
+		// 输出结果，释放空间
+		*result = keyRoute;
+
+		free(nodeE);
+		free(nodeL);
+		free(isKeyNode);
+		return STATUS_SUCCESS;
+	}
+	else {
+		// 如果拓扑排序失败，图不符合规则，无法寻找关键路径
+		return STATUS_FAIL;
+	}
+}
+

@@ -393,6 +393,58 @@ void testGraphMatrix() {
 
 	GRAPH_MATRIX_DESTROY(&g4);
 
+	printf("\n\n");
+
+	GRAPH_MATRIX g5;
+	int* topoArr = NULL;
+	GRAPH_MATRIX_INIT(&g5,5);
+	for (int i = 0; i < g5.nodeCount; i++) {
+		GRAPH_MATRIX_PUT_NODE_VALUE(&g5, i, i);
+	}
+	GRAPH_MATRIX_ADD_ARC(&g5, 0, 1, 1);
+	GRAPH_MATRIX_ADD_ARC(&g5, 0, 2, 1);
+	GRAPH_MATRIX_ADD_ARC(&g5, 1, 3, 1);
+	GRAPH_MATRIX_ADD_ARC(&g5, 1, 4, 1);
+	GRAPH_MATRIX_ADD_ARC(&g5, 2, 3, 1);
+	GRAPH_MATRIX_ADD_ARC(&g5, 3, 4, 1);
+	printGraphMatrix(g5);
+
+	printf("\n");
+	GRAPH_MATRIX_TOPOLOGY_SORT(&g5, &topoArr);
+	for (int i = 0; i < g5.nodeCount; i++) {
+		printf(" %d ", topoArr[i]);
+	}
+
+	GRAPH_MATRIX_DESTROY(&g5);
+	printf("\n\n");
+
+	GRAPH_MATRIX g6;
+	int* keyRouteArr = NULL;
+	GRAPH_MATRIX_INIT(&g6, 9);
+	for (int i = 0; i < g6.nodeCount; i++) {
+		GRAPH_MATRIX_PUT_NODE_VALUE(&g6, i, i);
+	}
+	GRAPH_MATRIX_ADD_ARC(&g6, 0, 1, 6);
+	GRAPH_MATRIX_ADD_ARC(&g6, 0, 2, 4);
+	GRAPH_MATRIX_ADD_ARC(&g6, 0, 3, 5);
+	GRAPH_MATRIX_ADD_ARC(&g6, 1, 4, 1);
+	GRAPH_MATRIX_ADD_ARC(&g6, 2, 4, 1);
+	GRAPH_MATRIX_ADD_ARC(&g6, 3, 5, 2);
+	GRAPH_MATRIX_ADD_ARC(&g6, 4, 6, 9);
+	GRAPH_MATRIX_ADD_ARC(&g6, 4, 7, 7);
+	GRAPH_MATRIX_ADD_ARC(&g6, 5, 7, 4);
+	GRAPH_MATRIX_ADD_ARC(&g6, 6, 8, 2);
+	GRAPH_MATRIX_ADD_ARC(&g6, 7, 8, 4);
+	printGraphMatrix(g6);
+
+	printf("\n");
+	GRAPH_MATRIX_KEY_ROUTE(&g6,&keyRouteArr);
+
+	for (int i = 0; i < g6.nodeCount; i++) {
+		printf(" %d ", keyRouteArr[i]);
+	}
+	GRAPH_MATRIX_DESTROY(&g6);
+
 }
 
 void testGraphLink() {
@@ -512,6 +564,57 @@ void testGraphLink() {
 
 	GRAPH_LINK_DESTROY(&g4);
 
+	printf("\n\n");
+
+	GRAPH_LINK g5;
+	int* topoArr = NULL;
+	GRAPH_LINK_INIT(&g5, 5);
+	for (int i = 0; i < g5.nodeCount; i++) {
+		GRAPH_LINK_PUT_NODE_VALUE(&g5, i, i);
+	}
+	GRAPH_LINK_ADD_ARC(&g5, 0, 1, 1);
+	GRAPH_LINK_ADD_ARC(&g5, 0, 2, 1);
+	GRAPH_LINK_ADD_ARC(&g5, 1, 3, 1);
+	GRAPH_LINK_ADD_ARC(&g5, 1, 4, 1);
+	GRAPH_LINK_ADD_ARC(&g5, 2, 3, 1);
+	GRAPH_LINK_ADD_ARC(&g5, 3, 4, 1);
+	printGraphLink(g5);
+
+	printf("\n");
+	GRAPH_LINK_TOPOLOGY_SORT(&g5, &topoArr);
+	for (int i = 0; i < g5.nodeCount; i++) {
+		printf(" %d ", topoArr[i]);
+	}
+
+	GRAPH_LINK_DESTROY(&g5);
+	printf("\n\n");
+
+	GRAPH_LINK g6;
+	int* keyRouteArr = NULL;
+	GRAPH_LINK_INIT(&g6, 9);
+	for (int i = 0; i < g6.nodeCount; i++) {
+		GRAPH_LINK_PUT_NODE_VALUE(&g6, i, i);
+	}
+	GRAPH_LINK_ADD_ARC(&g6, 0, 1, 6);
+	GRAPH_LINK_ADD_ARC(&g6, 0, 2, 4);
+	GRAPH_LINK_ADD_ARC(&g6, 0, 3, 5);
+	GRAPH_LINK_ADD_ARC(&g6, 1, 4, 1);
+	GRAPH_LINK_ADD_ARC(&g6, 2, 4, 1);
+	GRAPH_LINK_ADD_ARC(&g6, 3, 5, 2);
+	GRAPH_LINK_ADD_ARC(&g6, 4, 6, 9);
+	GRAPH_LINK_ADD_ARC(&g6, 4, 7, 7);
+	GRAPH_LINK_ADD_ARC(&g6, 5, 7, 4);
+	GRAPH_LINK_ADD_ARC(&g6, 6, 8, 2);
+	GRAPH_LINK_ADD_ARC(&g6, 7, 8, 4);
+	printGraphLink(g6);
+
+	printf("\n");
+	GRAPH_LINK_KEY_ROUTE(&g6, &keyRouteArr);
+
+	for (int i = 0; i < g6.nodeCount; i++) {
+		printf(" %d ", keyRouteArr[i]);
+	}
+	GRAPH_LINK_DESTROY(&g6);
 }
 
 int main() {

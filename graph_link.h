@@ -57,5 +57,8 @@ STATUS GRAPH_LINK_SHORTEST_ROUTE_FLOYD(GRAPH_LINK* graph, int*** powerResult, in
 
 STATUS GRAPH_LINK_SHORTEST_ROUTE_FLOYD_GET_RESULT(GRAPH_LINK* graph, int** powerMatrix, int** pathMatrix, int fromIdx, int toIdx, int** result);  // 从弗洛伊德算法的结果矩阵中获取指定节点的最短路径
 
+STATUS GRAPH_LINK_TOPOLOGY_SORT(GRAPH_LINK* graph, int** result);  // 拓扑排序
+
+STATUS GRAPH_LINK_KEY_ROUTE(GRAPH_LINK* graph, int** result);  // 关键路径
 
 #endif // !GRAPH_LINK_H
