@@ -7,11 +7,11 @@
 #include "bin_tree.h"
 #include "graph_matrix.h"
 #include "graph_link.h"
+#include "balance_bin_tree.h"
 
 /*
 TODO:
 1. 哈夫曼编码
-2. 树的定义，树和二叉树的转换
 */
 
 void myPrint(ELEM_TYPE d) {
@@ -54,6 +54,28 @@ void printGraphLink(GRAPH_LINK g) {
 		free(mat[i]);
 	}
 	free(mat);
+}
+
+void printBinTree(BIN_TREE* tree, int deep) {
+	if (tree != NULL) {
+		for (int i = 0; i < deep; i++) {
+			printf(" -- ");
+		}
+		printf("%d\n", tree->data);
+		printBinTree(tree->left, deep + 1);
+		printBinTree(tree->right, deep + 1);
+	}
+}
+
+void printBalanceBinTree(BALANCE_BIN_TREE* tree,int deep) {
+	if (tree != NULL) {
+		for (int i = 0; i < deep; i++) {
+			printf(" -- ");
+		}
+		printf("%d\n", tree->data);
+		printBalanceBinTree(tree->left, deep + 1);
+		printBalanceBinTree(tree->right, deep + 1);
+	}
 }
 
 void testSeqList() {
@@ -617,11 +639,87 @@ void testGraphLink() {
 	GRAPH_LINK_DESTROY(&g6);
 }
 
+void testFind() {
+	SEQ_LIST seq;
+	SEQ_LIST_INIT(&seq);
+	SEQ_LIST_ADD(&seq,1);
+	SEQ_LIST_ADD(&seq, 3);
+	SEQ_LIST_ADD(&seq, 7);
+	SEQ_LIST_ADD(&seq, 8);
+	SEQ_LIST_ADD(&seq, 13);
+	SEQ_LIST_ADD(&seq, 16);
+	SEQ_LIST_ADD(&seq, 17);
+
+	printf("seq list:\n");
+	printf(" %d\n ", SEQ_LIST_IS_CONTAIN_ELEM_SEQ(&seq, 7));
+	printf(" %d\n ", SEQ_LIST_IS_CONTAIN_ELEM_SEQ(&seq, 16));
+	printf(" %d\n ", SEQ_LIST_IS_CONTAIN_ELEM_BIN(&seq, 3));
+	printf(" %d\n ", SEQ_LIST_IS_CONTAIN_ELEM_BIN(&seq, 16));
+
+	LINK_LIST link;
+	LINK_LIST_INIT(&link);
+	LINK_LIST_ADD(&link, 1);
+	LINK_LIST_ADD(&link, 3);
+	LINK_LIST_ADD(&link, 7);
+	LINK_LIST_ADD(&link, 8);
+	LINK_LIST_ADD(&link, 13);
+	LINK_LIST_ADD(&link, 16);
+	LINK_LIST_ADD(&link, 17);
+
+	printf("link list:\n");
+	printf(" %d\n ", LINK_LIST_IS_CONTAIN_ELEM_SEQ(&link, 7));
+	printf(" %d\n ", LINK_LIST_IS_CONTAIN_ELEM_SEQ(&link, 16));
+
+	DL_LINK_LIST link2;
+	DL_LINK_LIST_INIT(&link2);
+	DL_LINK_LIST_ADD(&link2, 1);
+	DL_LINK_LIST_ADD(&link2, 3);
+	DL_LINK_LIST_ADD(&link2, 7);
+	DL_LINK_LIST_ADD(&link2, 8);
+	DL_LINK_LIST_ADD(&link2, 13);
+	DL_LINK_LIST_ADD(&link2, 16);
+	DL_LINK_LIST_ADD(&link2, 17);
+
+	printf(" %d\n ", DL_LINK_LIST_IS_CONTAIN_ELEM_SEQ(&link2, 7));
+	printf(" %d\n ", DL_LINK_LIST_IS_CONTAIN_ELEM_SEQ(&link2, 16));
+
+	BIN_TREE* bt = NULL;
+	BIN_TREE_ADD_ELEM(&bt, 13);
+	BIN_TREE_ADD_ELEM(&bt, 7);
+	BIN_TREE_ADD_ELEM(&bt, 16);
+	BIN_TREE_ADD_ELEM(&bt,1);
+	BIN_TREE_ADD_ELEM(&bt, 8);
+	BIN_TREE_ADD_ELEM(&bt, 3);
+	BIN_TREE_ADD_ELEM(&bt, 17);
+
+	printf("bin tree:\n");
+	printf("\n");
+	printBinTree(bt, 0);
+	printf("\n");
+	printf(" %d\n ", BIN_TREE_IS_CONTAIN_ELEM(bt, 4));
+	printf(" %d\n ", BIN_TREE_IS_CONTAIN_ELEM(bt, 16));
+
+	BALANCE_BIN_TREE* bbt = NULL;
+	BALANCE_BIN_TREE_ADD_ELEM(&bbt, 4); 
+	BALANCE_BIN_TREE_ADD_ELEM(&bbt, 5);
+	BALANCE_BIN_TREE_ADD_ELEM(&bbt, 7);
+	BALANCE_BIN_TREE_ADD_ELEM(&bbt, 2);
+	BALANCE_BIN_TREE_ADD_ELEM(&bbt, 1);
+	BALANCE_BIN_TREE_ADD_ELEM(&bbt, 3);
+	BALANCE_BIN_TREE_ADD_ELEM(&bbt, 6);
+
+	printf("balance bin tree:\n");
+	printf("\n");
+	printBalanceBinTree(bbt, 0);
+	printf("\n");
+	printf(" %d\n ", BALANCE_BIN_TREE_IS_CONTAIN_ELEM(bbt, 3));
+	printf(" %d\n ", BALANCE_BIN_TREE_IS_CONTAIN_ELEM(bbt, 7));
+
+}
+
 int main() {
 
-	testGraphMatrix();
-	printf("\n=================================\n");
-	testGraphLink();
+	testFind();
 
 	return 0;
 }

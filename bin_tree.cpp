@@ -184,3 +184,66 @@ STATUS BIN_TREE_INDEX_LRD(BIN_TREE* tree) {
 	free(ergodicList);
 	return STATUS_SUCCESS;
 }
+
+STATUS BIN_TREE_ADD_ELEM(BIN_TREE** tree, ELEM_TYPE data) {
+	// 创建新节点对象，并赋值
+	BIN_TREE* new_node = (BIN_TREE*)malloc(sizeof(BIN_TREE));
+	new_node->data = data;
+	new_node->left = NULL;
+	new_node->right = NULL;
+	new_node->leftIsChild = BOOLEAN_TRUE;
+	new_node->rightIsChild = BOOLEAN_TRUE;
+
+	if (*tree == NULL) {
+		// 如果是插入第一个节点，则直接给根节点指针赋值
+		*tree = new_node;
+	}
+	else {
+		// 如果不是插入第一个节点
+		BIN_TREE* p = *tree;
+		while (p != NULL) {
+			if (data < p->data) {
+				// 如果要插入的数据小于当前节点的数据
+				if (p->left == NULL) {
+					// 当前节点没有左孩子，则将新节点挂在当前节点的左孩子上
+					p->left = new_node;
+					p = NULL;
+				}
+				else {
+					// 否则当前节点指针下移到左孩子
+					p = p->left;
+				}
+			}
+			else {
+				// 如果要插入的数据大于等于当前节点的数据，同上
+				if (p->right == NULL) {
+					p->right = new_node;
+					p = NULL;
+				}
+				else {
+					p = p->right;
+				}
+			}
+		}
+	}
+	return STATUS_SUCCESS;
+}
+
+BOOLEAN BIN_TREE_IS_CONTAIN_ELEM(BIN_TREE* tree, ELEM_TYPE data) {
+	BIN_TREE* p = tree;
+	while (p != NULL) {
+		if (data < p->data) {
+			// 如果要查找的数据小于当前节点的数据，当前指针左下移
+			p = p->left;
+		}
+		else if (data > p->data) {
+			// 如果要查找的数据大于当前节点的数据，当前指针右下移
+			p = p->right;
+		}
+		else {
+			// 找到，返回
+			return BOOLEAN_TRUE;
+		}
+	}
+	return BOOLEAN_FALSE;
+}

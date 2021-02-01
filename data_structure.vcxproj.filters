@@ -66,6 +66,9 @@
     <ClCompile Include="graph_link.cpp">
       <Filter>源文件\graph</Filter>
     </ClCompile>
+    <ClCompile Include="balance_bin_tree.cpp">
+      <Filter>源文件\tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="seq_list.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="graph_link.h">
       <Filter>头文件\graph</Filter>
+    </ClInclude>
+    <ClInclude Include="balance_bin_tree.h">
+      <Filter>头文件\tree</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -81,6 +81,15 @@ STATUS LINK_LIST_DESTORY(LINK_LIST* list) {
 	return LINK_LIST_CLEAR(list);
 }
 
+STATUS LINK_LIST_IS_CONTAIN_ELEM_SEQ(LINK_LIST* list, ELEM_TYPE data) {
+	LINK_LIST_NODE* p = list->node;
+	while (p != NULL) {
+		if (p->data == data) return BOOLEAN_TRUE;
+		p = p->next;
+	}
+	return BOOLEAN_FALSE;
+}
+
 
 // Ë«ÏòÑ­»·Á´±í
 
@@ -198,4 +207,13 @@ STATUS DL_LINK_LIST_GET(DL_LINK_LIST* list, int idx, ELEM_TYPE* result) {
 
 STATUS DL_LINK_LIST_DESTORY(DL_LINK_LIST* list) {
 	return DL_LINK_LIST_CLEAR(list);
+}
+
+STATUS DL_LINK_LIST_IS_CONTAIN_ELEM_SEQ(DL_LINK_LIST* list, ELEM_TYPE data) {
+	DL_LINK_LIST_NODE* p = list->node;
+	while (p != NULL) {
+		if (p->data == data) return BOOLEAN_TRUE;
+		p = p->next;
+	}
+	return BOOLEAN_FALSE;
 }

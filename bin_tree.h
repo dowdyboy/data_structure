@@ -36,4 +36,10 @@ STATUS BIN_TREE_INDEX_LDR(BIN_TREE* tree);  // 中序线索化
 
 STATUS BIN_TREE_INDEX_LRD(BIN_TREE* tree);  // 后序线索化
 
+// ============= 查找 / 排序 ===============
+
+STATUS BIN_TREE_ADD_ELEM(BIN_TREE** tree, ELEM_TYPE data);  // 二叉排序树添加元素
+
+BOOLEAN BIN_TREE_IS_CONTAIN_ELEM(BIN_TREE* tree,ELEM_TYPE data);  // 二叉排序树查找
+
 #endif // !BIN_TREE_H

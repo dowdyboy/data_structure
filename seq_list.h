@@ -29,4 +29,10 @@ STATUS SEQ_LIST_GET(SEQ_LIST* list, int idx, ELEM_TYPE *result); // 获取
 
 STATUS SEQ_LIST_DESTORY(SEQ_LIST* list);  // 销毁
 
+// ============= 查找 / 排序 ===============
+
+BOOLEAN SEQ_LIST_IS_CONTAIN_ELEM_SEQ(SEQ_LIST* list, ELEM_TYPE data);  // 顺序查找
+
+BOOLEAN SEQ_LIST_IS_CONTAIN_ELEM_BIN(SEQ_LIST* list, ELEM_TYPE data);  // 折半查找
+
 #endif
