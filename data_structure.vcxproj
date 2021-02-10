@@ -146,6 +146,7 @@
     <ClCompile Include="data_structure.cpp" />
     <ClCompile Include="graph_link.cpp" />
     <ClCompile Include="graph_matrix.cpp" />
+    <ClCompile Include="hash.cpp" />
     <ClCompile Include="link_list.cpp" />
     <ClCompile Include="queue.cpp" />
     <ClCompile Include="seq_list.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="chars.h" />
     <ClInclude Include="graph_link.h" />
     <ClInclude Include="graph_matrix.h" />
+    <ClInclude Include="hash.h" />
     <ClInclude Include="link_list.h" />
     <ClInclude Include="queue.h" />
     <ClInclude Include="seq_list.h" />

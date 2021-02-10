@@ -9,6 +9,8 @@
 #include "graph_link.h"
 #include "balance_bin_tree.h"
 #include "b_tree.h"
+#include "hash.h"
+
 
 /*
 TODO:
@@ -733,6 +735,39 @@ void testFind() {
 	printf(" %d\n ", BALANCE_BIN_TREE_IS_CONTAIN_ELEM(bbt, 3));
 	printf(" %d\n ", BALANCE_BIN_TREE_IS_CONTAIN_ELEM(bbt, 7));
 
+	HASH_ARRAY ha;
+	HASH_ARRAY_INIT(&ha,20);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 1);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 3);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 5);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 21);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 41);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 61);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 81);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 2);
+	HASH_ARRAY_ADD_ELEM_LINK(&ha, 3);
+
+	printf("\nhash array :\n");
+	printf("\n");
+	for (int i = 0; i < ha.size; i++) {
+		if (ha.data[i] != NULL) {
+			printf(" %d ", ha.data[i]->data);
+			HASH_ARRAY_DATA* p = ha.data[i]->next;
+			if (p != NULL) {
+				printf("(");
+				while (p != NULL) {
+					printf(" %d ", p->data);
+					p = p->next;
+				}
+				printf(")");
+			}
+		}
+		else {
+			printf(" -1 ");
+		}
+	}
+	printf("\n");
+	printf("is contain : %d\n", HASH_ARRAY_IS_CONTAIN_ELEM_LINK(&ha, 81));
 }
 
 void testBTree() {
@@ -773,7 +808,7 @@ void testBTree() {
 
 int main() {
 
-	testBTree();
+	testFind();
 
 	return 0;
 }

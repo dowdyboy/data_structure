@@ -72,6 +72,9 @@
     <ClCompile Include="b_tree.cpp">
       <Filter>源文件\tree</Filter>
     </ClCompile>
+    <ClCompile Include="hash.cpp">
+      <Filter>源文件\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="seq_list.h">
@@ -106,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="b_tree.h">
       <Filter>头文件\tree</Filter>
+    </ClInclude>
+    <ClInclude Include="hash.h">
+      <Filter>头文件\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
