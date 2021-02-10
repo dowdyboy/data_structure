@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="balance_bin_tree.cpp" />
     <ClCompile Include="bin_tree.cpp" />
+    <ClCompile Include="b_tree.cpp" />
     <ClCompile Include="chars.cpp" />
     <ClCompile Include="data_structure.cpp" />
     <ClCompile Include="graph_link.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="balance_bin_tree.h" />
     <ClInclude Include="basis.h" />
     <ClInclude Include="bin_tree.h" />
+    <ClInclude Include="b_tree.h" />
     <ClInclude Include="chars.h" />
     <ClInclude Include="graph_link.h" />
     <ClInclude Include="graph_matrix.h" />

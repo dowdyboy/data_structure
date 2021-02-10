@@ -8,10 +8,12 @@
 #include "graph_matrix.h"
 #include "graph_link.h"
 #include "balance_bin_tree.h"
+#include "b_tree.h"
 
 /*
 TODO:
 1. 哈夫曼编码
+2. B树移除元素
 */
 
 void myPrint(ELEM_TYPE d) {
@@ -64,6 +66,22 @@ void printBinTree(BIN_TREE* tree, int deep) {
 		printf("%d\n", tree->data);
 		printBinTree(tree->left, deep + 1);
 		printBinTree(tree->right, deep + 1);
+	}
+}
+
+void printBTree(B_TREE_NODE* tree,int deep) {
+	if (tree != NULL) {
+		for (int i = 0; i < deep; i++) {
+			printf(" - ");
+		}
+		for (int i = 0; i < tree->count; i++) {
+			printf(" %d ", tree->data[i]);
+		}
+		printf(" (%d,%d) ",tree, tree->parent);
+		printf("\n");
+		for (int i = 0; i < tree->count + 1; i++) {
+			printBTree(tree->children[i], deep + 1);
+		}
 	}
 }
 
@@ -717,9 +735,45 @@ void testFind() {
 
 }
 
+void testBTree() {
+	B_TREE tree;
+	B_TREE_INIT(&tree,3);
+	B_TREE_ADD_ELEM(&tree,45);
+	B_TREE_ADD_ELEM(&tree, 24);
+	B_TREE_ADD_ELEM(&tree, 53);
+	B_TREE_ADD_ELEM(&tree, 90);
+	B_TREE_ADD_ELEM(&tree, 3);
+	B_TREE_ADD_ELEM(&tree, 12);
+	B_TREE_ADD_ELEM(&tree, 37);
+	B_TREE_ADD_ELEM(&tree, 50);
+	B_TREE_ADD_ELEM(&tree, 61);
+	B_TREE_ADD_ELEM(&tree, 70); 
+	B_TREE_ADD_ELEM(&tree, 100);
+	// -- 
+	B_TREE_ADD_ELEM(&tree, 30);
+	B_TREE_ADD_ELEM(&tree, 26);
+	B_TREE_ADD_ELEM(&tree, 85);
+	B_TREE_ADD_ELEM(&tree, 7);
+
+	for (int i = 0; i < tree.root->count; i++) {
+		printf(" %d ", tree.root->data[i]);
+	}
+	printf("\n");
+	for (int i = 0; i < tree.root->count + 1; i++) {
+		printf(" %d ", tree.root->children[i]);
+	}
+	printf("\n\n");
+
+	printBTree(tree.root, 0);
+
+	printf("\n\n");
+
+	printf("is contain : %d\n", B_TREE_IS_CONTAIN_ELEM(&tree, 26));
+}
+
 int main() {
 
-	testFind();
+	testBTree();
 
 	return 0;
 }
