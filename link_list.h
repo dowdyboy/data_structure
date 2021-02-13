@@ -35,6 +35,11 @@ STATUS LINK_LIST_DESTORY(LINK_LIST* list);  // 销毁
 
 STATUS LINK_LIST_IS_CONTAIN_ELEM_SEQ(LINK_LIST* list, ELEM_TYPE data);  // 顺序查找
 
+STATUS LINK_LIST_INSERT_SORT(LINK_LIST* list);  // 直接插入排序
+
+STATUS LINK_LIST_SELECT_SORT(LINK_LIST* list);  // 选择排序
+
+
 // 双向循环链表
 
 typedef struct _dl_link_list_node {
@@ -67,5 +72,9 @@ STATUS DL_LINK_LIST_DESTORY(DL_LINK_LIST* list);  // 销毁
 // ============= 查找 / 排序 ===============
 
 STATUS DL_LINK_LIST_IS_CONTAIN_ELEM_SEQ(DL_LINK_LIST* list, ELEM_TYPE data);  // 顺序查找
+
+STATUS DL_LINK_LIST_INSERT_SORT(DL_LINK_LIST* list);  // 直接插入排序
+
+STATUS DL_LINK_LIST_SELECT_SORT(DL_LINK_LIST* list);  // 选择排序
 
 #endif // !LINK_LIST_H

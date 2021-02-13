@@ -35,4 +35,21 @@ BOOLEAN SEQ_LIST_IS_CONTAIN_ELEM_SEQ(SEQ_LIST* list, ELEM_TYPE data);  // À≥–Ú≤È
 
 BOOLEAN SEQ_LIST_IS_CONTAIN_ELEM_BIN(SEQ_LIST* list, ELEM_TYPE data);  // ’€∞Î≤È’“
 
+STATUS SEQ_LIST_INSERT_SORT(SEQ_LIST* list);  // ÷±Ω”≤Â»Î≈≈–Ú
+
+STATUS SEQ_LIST_HALF_INSERT_SORT(SEQ_LIST* list);  // ’€∞Î≤Â»Î≈≈–Ú
+
+STATUS SEQ_LIST_SHELL_SORT(SEQ_LIST* list);  // œ£∂˚≈≈–Ú
+
+STATUS SEQ_LIST_BUBBLE_SORT(SEQ_LIST* list);  // √∞≈›≈≈–Ú
+
+STATUS SEQ_LIST_QUICK_SORT(SEQ_LIST* list);  // øÏÀŸ≈≈–Ú
+
+STATUS SEQ_LIST_SELECT_SORT(SEQ_LIST* list);  // —°‘Ò≈≈–Ú
+
+STATUS SEQ_LIST_HEAP_SORT(SEQ_LIST* list);  // ∂—≈≈–Ú
+
+STATUS SEQ_LIST_MERGE_SORT(SEQ_LIST* list);  // πÈ≤¢≈≈–Ú
+
+
 #endif

@@ -16,6 +16,7 @@
 TODO:
 1. 哈夫曼编码
 2. B树移除元素
+3. 附加：红黑树，B+树
 */
 
 void myPrint(ELEM_TYPE d) {
@@ -806,9 +807,211 @@ void testBTree() {
 	printf("is contain : %d\n", B_TREE_IS_CONTAIN_ELEM(&tree, 26));
 }
 
+void testSort() {
+	SEQ_LIST sl;
+	SEQ_LIST_INIT(&sl);
+	// -- 
+	//SEQ_LIST_ADD(&sl, 21);
+	//SEQ_LIST_ADD(&sl, 25);
+	//SEQ_LIST_ADD(&sl, 49);
+	//SEQ_LIST_ADD(&sl, 25);
+	//SEQ_LIST_ADD(&sl, 16);
+	//SEQ_LIST_ADD(&sl, 8);
+	//SEQ_LIST_ADD(&sl, 25);
+	// -- 
+	//SEQ_LIST_ADD(&sl, 1);
+	//SEQ_LIST_ADD(&sl, 4);
+	//SEQ_LIST_ADD(&sl, 6);
+	//SEQ_LIST_ADD(&sl, 7);
+	//SEQ_LIST_ADD(&sl, 16);
+	// -- 
+	//SEQ_LIST_ADD(&sl, 16);
+	//SEQ_LIST_ADD(&sl, 7);
+	//SEQ_LIST_ADD(&sl, 6);
+	//SEQ_LIST_ADD(&sl, 4);
+	//SEQ_LIST_ADD(&sl, 1);
+	// -- 
+	/*SEQ_LIST_ADD(&sl, 46);
+	SEQ_LIST_ADD(&sl, 8);
+	SEQ_LIST_ADD(&sl, 16);
+	SEQ_LIST_ADD(&sl, 23);
+	SEQ_LIST_ADD(&sl, 6);
+	SEQ_LIST_ADD(&sl, 1);
+	SEQ_LIST_ADD(&sl, 8);
+	SEQ_LIST_ADD(&sl, 56);
+	SEQ_LIST_ADD(&sl, 33);
+	SEQ_LIST_ADD(&sl, 22);
+	SEQ_LIST_ADD(&sl, 3);
+	SEQ_LIST_ADD(&sl, 9);
+	SEQ_LIST_ADD(&sl, 68);
+	SEQ_LIST_ADD(&sl, 72);
+	SEQ_LIST_ADD(&sl, 54);
+	SEQ_LIST_ADD(&sl, 41);
+	SEQ_LIST_ADD(&sl, 30);
+	SEQ_LIST_ADD(&sl, 29);
+	SEQ_LIST_ADD(&sl, 7);*/
+	// --
+	//SEQ_LIST_ADD(&sl, 9);
+	//SEQ_LIST_ADD(&sl, 6);
+
+	printf("origin:\n");
+	for (int i = 0; i < sl.length; i++) {
+		printf(" %d ", sl.data[i]);
+	}
+	printf("\n");
+
+	printf("sort:\n");
+	//SEQ_LIST_INSERT_SORT(&sl);
+	//SEQ_LIST_HALF_INSERT_SORT(&sl);
+	//SEQ_LIST_SHELL_SORT(&sl);
+	//SEQ_LIST_BUBBLE_SORT(&sl);
+	//SEQ_LIST_QUICK_SORT(&sl);
+	//SEQ_LIST_SELECT_SORT(&sl);
+	//SEQ_LIST_MERGE_SORT(&sl);
+	SEQ_LIST_HEAP_SORT(&sl);
+	for (int i = 0; i < sl.length; i++) {
+		printf(" %d ", sl.data[i]);
+	}
+	printf("\n\n\n");
+
+	LINK_LIST ll;
+	LINK_LIST_INIT(&ll);
+	// -- 
+	//LINK_LIST_ADD(&ll, 21);
+	//LINK_LIST_ADD(&ll, 25);
+	//LINK_LIST_ADD(&ll, 49);
+	//LINK_LIST_ADD(&ll, 25);
+	//LINK_LIST_ADD(&ll, 16);
+	//LINK_LIST_ADD(&ll, 8);
+	//LINK_LIST_ADD(&ll, 25);
+	// -- 
+	//LINK_LIST_ADD(&ll, 1);
+	//LINK_LIST_ADD(&ll, 4);
+	//LINK_LIST_ADD(&ll, 6);
+	//LINK_LIST_ADD(&ll, 7);
+	//LINK_LIST_ADD(&ll, 16);
+	// -- 
+	//LINK_LIST_ADD(&ll, 16);
+	//LINK_LIST_ADD(&ll, 7);
+	//LINK_LIST_ADD(&ll, 6);
+	//LINK_LIST_ADD(&ll, 4);
+	//LINK_LIST_ADD(&ll, 1);
+	// -- 
+	//LINK_LIST_ADD(&ll, 46);
+	//LINK_LIST_ADD(&ll, 8);
+	//LINK_LIST_ADD(&ll, 16);
+	//LINK_LIST_ADD(&ll, 23);
+	//LINK_LIST_ADD(&ll, 6);
+	//LINK_LIST_ADD(&ll, 1);
+	//LINK_LIST_ADD(&ll, 8);
+	//LINK_LIST_ADD(&ll, 56);
+	//LINK_LIST_ADD(&ll, 33);
+	//LINK_LIST_ADD(&ll, 22);
+	//LINK_LIST_ADD(&ll, 3);
+	//LINK_LIST_ADD(&ll, 9);
+	//LINK_LIST_ADD(&ll, 68);
+	//LINK_LIST_ADD(&ll, 72);
+	//LINK_LIST_ADD(&ll, 54);
+	//LINK_LIST_ADD(&ll, 41);
+	//LINK_LIST_ADD(&ll, 30);
+	//LINK_LIST_ADD(&ll, 29);
+	//LINK_LIST_ADD(&ll, 7);
+	// --
+	//LINK_LIST_ADD(&ll, 9);
+	//LINK_LIST_ADD(&ll, 6);
+
+	printf("origin:\n");
+	LINK_LIST_NODE* p = ll.node;
+	while (p != NULL) {
+		printf(" %d ", p->data);
+		p = p->next;
+	}
+	printf("\n");
+
+	printf("sort:\n");
+	//LINK_LIST_INSERT_SORT(&ll);
+	LINK_LIST_SELECT_SORT(&ll);
+	p = ll.node;
+	while (p != NULL) {
+		printf(" %d ", p->data);
+		p = p->next;
+	}
+	printf("\n\n\n");
+
+	DL_LINK_LIST dll;
+	DL_LINK_LIST_INIT(&dll);
+	// -- 
+	//DL_LINK_LIST_ADD(&dll, 21);
+	//DL_LINK_LIST_ADD(&dll, 25);
+	//DL_LINK_LIST_ADD(&dll, 49);
+	//DL_LINK_LIST_ADD(&dll, 25);
+	//DL_LINK_LIST_ADD(&dll, 16);
+	//DL_LINK_LIST_ADD(&dll, 8);
+	//DL_LINK_LIST_ADD(&dll, 25);
+	// -- 
+	//DL_LINK_LIST_ADD(&dll, 1);
+	//DL_LINK_LIST_ADD(&dll, 4);
+	//DL_LINK_LIST_ADD(&dll, 6);
+	//DL_LINK_LIST_ADD(&dll, 7);
+	//DL_LINK_LIST_ADD(&dll, 16);
+	// -- 
+	//DL_LINK_LIST_ADD(&dll, 16);
+	//DL_LINK_LIST_ADD(&dll, 7);
+	//DL_LINK_LIST_ADD(&dll, 6);
+	//DL_LINK_LIST_ADD(&dll, 4);
+	//DL_LINK_LIST_ADD(&dll, 1);
+	// -- 
+	//DL_LINK_LIST_ADD(&dll, 46);
+	//DL_LINK_LIST_ADD(&dll, 8);
+	//DL_LINK_LIST_ADD(&dll, 16);
+	//DL_LINK_LIST_ADD(&dll, 23);
+	//DL_LINK_LIST_ADD(&dll, 6);
+	//DL_LINK_LIST_ADD(&dll, 1);
+	//DL_LINK_LIST_ADD(&dll, 8);
+	//DL_LINK_LIST_ADD(&dll, 56);
+	//DL_LINK_LIST_ADD(&dll, 33);
+	//DL_LINK_LIST_ADD(&dll, 22);
+	//DL_LINK_LIST_ADD(&dll, 3);
+	//DL_LINK_LIST_ADD(&dll, 9);
+	//DL_LINK_LIST_ADD(&dll, 68);
+	//DL_LINK_LIST_ADD(&dll, 72);
+	//DL_LINK_LIST_ADD(&dll, 54);
+	//DL_LINK_LIST_ADD(&dll, 41);
+	//DL_LINK_LIST_ADD(&dll, 30);
+	//DL_LINK_LIST_ADD(&dll, 29);
+	//DL_LINK_LIST_ADD(&dll, 7);
+	// --
+	//DL_LINK_LIST_ADD(&dll, 9);
+	//DL_LINK_LIST_ADD(&dll, 6);
+
+	printf("origin:\n");
+	DL_LINK_LIST_NODE* dp = NULL;
+	while (dp != dll.node) {
+		if (dp == NULL) {
+			dp = dll.node;
+		}
+		printf(" %d ", dp->data);
+		dp = dp->next;
+	}
+	printf("\n");
+
+	printf("sort:\n");
+	//DL_LINK_LIST_INSERT_SORT(&dll);
+	DL_LINK_LIST_SELECT_SORT(&dll);
+	dp = NULL;
+	while (dp != dll.node) {
+		if (dp == NULL) {
+			dp = dll.node;
+		}
+		printf(" %d ", dp->data);
+		dp = dp->next;
+	}
+	printf("\n\n\n");
+}
+
 int main() {
 
-	testFind();
+	testSort();
 
 	return 0;
 }

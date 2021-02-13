@@ -90,6 +90,68 @@ STATUS LINK_LIST_IS_CONTAIN_ELEM_SEQ(LINK_LIST* list, ELEM_TYPE data) {
 	return BOOLEAN_FALSE;
 }
 
+// 算法思路同顺序表版本，注释参见seq_list.cpp
+STATUS LINK_LIST_INSERT_SORT(LINK_LIST* list) {
+	LINK_LIST_NODE* current = list->node, * pre_current = NULL;
+	while (current != NULL) {
+		LINK_LIST_NODE* p = list->node, * pre_p = NULL;
+		while (p != current && p->data <= current->data) {
+			pre_p = pre_p == NULL ? p : pre_p->next;
+			p = p->next;
+		}
+		if (p == current) {
+			pre_current = pre_current == NULL ? current : pre_current->next;
+			current = current->next;
+		}
+		else {
+			LINK_LIST_NODE* q = current;
+			pre_current->next = current->next;
+			current = current->next;
+			q->next = p;
+			if (pre_p != NULL) {
+				pre_p->next = q;
+			}
+			else {
+				list->node = q;
+			}
+		}
+	}
+	return STATUS_SUCCESS;
+}
+
+// 算法思路同顺序表版本，注释参见seq_list.cpp
+STATUS LINK_LIST_SELECT_SORT(LINK_LIST* list) {
+	LINK_LIST_NODE* current = list->node, * pre_current = NULL;
+	while (current != NULL) {
+		LINK_LIST_NODE* p = current, * pre_p = NULL, * min = p, * pre_min = NULL;
+		while (p != NULL) {
+			if (p->data < min->data) {
+				min = p;
+				pre_min = pre_p;
+			}
+			pre_p = pre_p == NULL ? p : pre_p->next;
+			p = p->next;
+		}
+		if (min != current) {
+			pre_min->next = min->next;
+			min->next = current;
+			if (pre_current != NULL) {
+				pre_current->next = min;
+				pre_current = min;
+			}
+			else {
+				list->node = min;
+				pre_current = min;
+			}
+		}
+		else {
+			pre_current = pre_current == NULL ? current : pre_current->next;
+			current = current->next;
+		}
+	}
+	return STATUS_SUCCESS;
+}
+
 
 // 双向循环链表
 
@@ -209,11 +271,79 @@ STATUS DL_LINK_LIST_DESTORY(DL_LINK_LIST* list) {
 	return DL_LINK_LIST_CLEAR(list);
 }
 
-STATUS DL_LINK_LIST_IS_CONTAIN_ELEM_SEQ(DL_LINK_LIST* list, ELEM_TYPE data) {
+BOOLEAN DL_LINK_LIST_IS_CONTAIN_ELEM_SEQ(DL_LINK_LIST* list, ELEM_TYPE data) {
 	DL_LINK_LIST_NODE* p = list->node;
 	while (p != NULL) {
 		if (p->data == data) return BOOLEAN_TRUE;
 		p = p->next;
 	}
 	return BOOLEAN_FALSE;
+}
+
+// 算法思路同顺序表版本，注释参见seq_list.cpp
+STATUS DL_LINK_LIST_INSERT_SORT(DL_LINK_LIST* list) {
+	DL_LINK_LIST_NODE* current = NULL;
+	while (current != list->node) {
+		if (current == NULL) {
+			current = list->node;
+		}
+		DL_LINK_LIST_NODE* p = list->node;
+		while (p != current && p->data <= current->data) {
+			p = p->next;
+		}
+		if (p == current) {
+			current = current->next;
+		}
+		else {
+			DL_LINK_LIST_NODE* q = current;
+			current->prior->next = current->next;
+			current->next->prior = current->prior;
+			current = current->next;
+			q->next = p;
+			q->prior = p->prior;
+			q->prior->next = q;
+			q->next->prior = q;
+			if (p == list->node) {
+				list->node = q;
+			}
+		}
+	}
+	return STATUS_SUCCESS;
+}
+
+// 算法思路同顺序表版本，注释参见seq_list.cpp
+STATUS DL_LINK_LIST_SELECT_SORT(DL_LINK_LIST* list) {
+	DL_LINK_LIST_NODE* current = NULL;
+	while (current != list->node) {
+		if (current == NULL) {
+			current = list->node;
+		}
+		DL_LINK_LIST_NODE* p = NULL, * min = NULL;
+		while (p != list->node) {
+			if (p == NULL) {
+				p = current;
+				min = p;
+			}
+			if (p->data < min->data) {
+				min = p;
+			}
+			p = p->next;
+		}
+		if (min != current) {
+			min->prior->next = min->next;
+			min->next->prior = min->prior;
+
+			min->next = current;
+			min->prior = current->prior;
+			min->prior->next = min;
+			min->next->prior = min;
+			if (current == list->node) {
+				list->node = min;
+			}
+		}
+		else {
+			current = current->next;
+		}
+	}
+	return STATUS_SUCCESS;
 }
